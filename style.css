@@ -1,0 +1,75 @@
+:root {
+    /* Светлая тема */
+    --light-bg: #F8FAFC;
+    --light-surface: #FFFFFF;
+    --light-text: #1E293B;
+    --light-primary: #3B82F6;
+    --light-border: #E2E8F0;
+
+
+    /* Тёмная тема */
+    --dark-bg: #0F172A;
+    --dark-surface: #1E293B;
+    --dark-text: #F1F5F9;
+    --dark-primary: #60A5FA;
+    --dark-border: #334155;
+
+    
+    /* цвета таймера */
+    --strength-1: #D32F2F; /* Фигня */
+    --strength-2: #F57C00; /* Плохой */
+    --strength-3: #ffb300; /* Нормально */
+    --strength-4: #AED581; /* Хороший */
+    --strength-5: #388E3C; /* Идеальный */
+}
+@font-face {
+    font-family: 'NewFonts';
+    src: url('./fonts/Rodchenko reg.otf') format('otf');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    margin: 0;
+    /* шрифт */
+    font-family: 'NewFonts', sans-serif;
+
+    /* flex контейнер */
+    display: flex;
+    flex-direction: column;
+
+    /* минимальна высота */
+    min-height: 100vh;
+
+}
+
+.TitleTime{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: --dark; 
+    padding: 10px; 
+    text-align: center;
+}
+main{
+    background: var(--dark);
+    
+}
+time{
+
+}
+
+footer{
+    background-color: var(--dark-brown);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+}
