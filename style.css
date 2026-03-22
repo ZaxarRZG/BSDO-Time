@@ -1,6 +1,7 @@
 :root {
     /* Светлая тема */
     --bg: #F8FAFC;
+    --url: #3498db;
     --text: #1E293B;
     --button: #E2E8F0;
     --primary: #3B82F6;
@@ -9,6 +10,7 @@
 [data-theme="dark"]{
     /* Тёмная тема */
     --bg: #0F172A;
+    --url: #3498db;
     --text: #F1F5F9;
     --button: #334155;
     --primary: #60A5FA;
@@ -97,6 +99,12 @@ footer{
     background-color: var(--surface);
     
 }
-#CopyCast{
+#copyright{
     margin-right:auto ;
+}
+#Avtor{
+    color: var(--url);
+}
+#BtnRepos{
+    margin-left: auto;
 }
