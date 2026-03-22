@@ -1,33 +1,33 @@
 :root {
     /* Светлая тема */
-    --light-bg: #F8FAFC;
-    --light-surface: #FFFFFF;
-    --light-text: #1E293B;
-    --light-primary: #3B82F6;
-    --light-border: #E2E8F0;
-
-
+    --bg: #F8FAFC;
+    --text: #1E293B;
+    --button: #E2E8F0;
+    --primary: #3B82F6;
+    --surface: #FFFFFF;
+}
+[data-theme="dark"]{
     /* Тёмная тема */
-    --dark-bg: #0F172A;
-    --dark-surface: #1E293B;
-    --dark-text: #F1F5F9;
-    --dark-primary: #60A5FA;
-    --dark-border: #334155;
-
-    
+    --bg: #0F172A;
+    --text: #F1F5F9;
+    --button: #334155;
+    --primary: #60A5FA;
+    --surface: #1E293B;
+}
+[Data-Clock="color"]{
     /* цвета таймера */
-    --strength-1: #D32F2F; /* Фигня */
-    --strength-2: #F57C00; /* Плохой */
-    --strength-3: #ffb300; /* Нормально */
-    --strength-4: #AED581; /* Хороший */
-    --strength-5: #388E3C; /* Идеальный */
+    --strength-1: #D32F2F; /* 5 - 3 секунд */
+    --strength-2: #F57C00; /* 10 - 5 секунд */
+    --strength-3: #ffb300; /* 20 - 10 секунд */
+    --strength-4: #AED581; /* 30 - 20 секунд */
+    --strength-5: #388E3C; /* постоянно если есть условие */
 }
 @font-face {
-    font-family: 'NewFonts';
-    src: url('./fonts/Rodchenko reg.otf') format('otf');
-    font-weight: normal;
     font-style: normal;
     font-display: swap;
+    font-weight: normal;
+    font-family: 'NewFonts';
+    src: url('./fonts/Rodchenko reg.otf') format('otf');
 }
 * {
     margin: 0;
@@ -41,35 +41,62 @@ body {
     /* шрифт */
     font-family: 'NewFonts', sans-serif;
 
-    /* flex контейнер */
+    /* делаем flex контейнер */
     display: flex;
     flex-direction: column;
 
     /* минимальна высота */
     min-height: 100vh;
 
+    /* тема сайта */
+    background-color: var(--bg);
+    transition: background-color 0.3s ease, color 0.3s ease; /* Плавный переход */
 }
 
 .TitleTime{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: --dark; 
     padding: 10px; 
+    display: flex;
     text-align: center;
+    align-items: center;
+    background: var(--bg); 
+    justify-content: center;
+}
+#BSODTime{
+    color: var(--text);
+}
+#Btn-Them{
+    margin-left: auto;
+    color: var(--button)
+}
+#BtnThem{
+    color: var(--text)
 }
 main{
-    background: var(--dark);
-    
+    flex: 1;
+    padding: 20px;
+    text-align: center;
+    background: var(--bg);
 }
-time{
-
+.Clock-Container{
+    font-size: 5rem;
+    font-weight: bold;
+    color: var(--text);
+}
+.Data-Container{
+    font-size: 2rem;
+    font-weight: 100;
+    color: var(--text);
 }
 
 footer{
-    background-color: var(--dark-brown);
-    color: white;
-    text-align: center;
     padding: 20px;
+    display: flex;
     font-size: 0.9rem;
+    text-align: center;
+    color: var(--text);
+    background-color: var(--surface);
+    
+}
+#CopyCast{
+    margin-right:auto ;
 }

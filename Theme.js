@@ -1,5 +1,5 @@
         const body = document.body;
-        const toggleButton = document.getElementById('theme-toggle');
+        const toggleButton = document.getElementById('BtnThem');
         const themeSpan = document.getElementById('current-theme');
 
 
