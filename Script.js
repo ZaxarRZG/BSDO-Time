@@ -1,276 +1,164 @@
-document.addEventListener('DOMcontentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
 
-const DateTimerPicker = document.getElementById('datetime-picker');
-const SetTimerBtn = document.getElementById('set-timer');
-const Test10sBtn = document.getElementById('test-10s');
-const ResetBsodBtn = document.getElementById('reset-bsod');
-const BsodScreen = document.getElementById('bsod-screen');
-
-const DaysSpan = document.getElementById('days');
-const HoursSpan = document.getElementById('hours');
-const MinuteSpan = document.getElementById('minute');
-const SecondSpan = document.getElementById('seconds');
-
-let TargetTime = null;
-let TimerInterval = null;
-let BsodActive = false;
-
-const Now = new Date();
-const NextYear = now.getFullYear() + 1;
-const NewYear = new Date (nextYear, 0, 0, 0, 0);
-DetetimePicker.value = newYear
-
-function UpdateTimer() {
-    if (!TargetTime) return; 
-document.addEventListener('DOMContentLoaded', function() {
-
-    const datetimePicker = document.getElementById('datetime-picker'); 
-    const setTimerBtn = document.getElementById('set-timer');
+    const realTimeDiv = document.getElementById('real-time');
+    const targetDateInput = document.getElementById('target-date');
+    const setTargetBtn = document.getElementById('set-target');
     const test10sBtn = document.getElementById('test-10s');
-    const resetBsodBtn = document.getElementById('reset-bsod');
-    const bsodScreen = document.getElementById('bsod-screen');
-    
-    const daysSpan = document.getElementById('days');
-    const hoursSpan = document.getElementById('hours');
-    const minutesSpan = document.getElementById('minutes');
-    const secondsSpan = document.getElementById('seconds');
+    const resetTimerBtn = document.getElementById('reset-timer');
+    const countdownDiv = document.getElementById('countdown');
+    const targetDateDisplay = document.getElementById('target-date-display');
+    const bsodOverlay = document.getElementById('bsod-overlay');
 
 
     let targetTime = null;
-    let timerInterval = null;
-    let bsodActive = false;
-
-   
-    const now = new Date();
-    const nextYear = now.getFullYear() + 1;
-    const newYear = new Date(nextYear, 0, 1, 0, 0); 
-    datetimePicker.value = newYear.toISOString().slice(0, 16);
+    let countdownInterval = null;
+    let realTimeInterval = null;
 
 
-    function updateTimer() {
-        if (!targetTime) return;
-        
+    const pad = (num) => num.toString().padStart(2, '0');
+
+    function updateRealTime() {
+        const now = new Date();
+        const hours = pad(now.getHours());
+        const minutes = pad(now.getMinutes());
+        const seconds = pad(now.getSeconds());
+        realTimeDiv.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+
+    function startRealTime() {
+        updateRealTime();
+        if (realTimeInterval) clearInterval(realTimeInterval);
+        realTimeInterval = setInterval(updateRealTime, 1000);
+    }
+
+
+    function updateColorBySeconds(secondsLeft) {
+        if (!countdownDiv) return;
+        let colorVar = '';
+        if (secondsLeft <= 5) {
+            colorVar = 'var(--strength-1)'; // красный
+        } else if (secondsLeft <= 9) {
+            colorVar = 'var(--strength-2)'; // оранжевый
+        } else if (secondsLeft <= 19) {
+            colorVar = 'var(--strength-3)'; // жёлтый
+        } else if (secondsLeft <= 30) {
+            colorVar = 'var(--strength-4)'; // салатовый
+        } else {
+            colorVar = 'var(--strength-5)'; // зелёный
+        }
+        countdownDiv.style.color = colorVar;
+    }
+
+    function updateCountdown() {
+        if (!targetTime) {
+            countdownDiv.textContent = '-- : -- : -- : --';
+            targetDateDisplay.textContent = '';
+            return;
+        }
+
         const now = new Date();
         const diff = targetTime - now;
 
         if (diff <= 0) {
-
-            stopTimer();
+            stopCountdown();
             showBSOD();
+            countdownDiv.textContent = '00 : 00 : 00 : 00';
+            updateColorBySeconds(0);
+            targetDateDisplay.textContent = '';
             return;
         }
 
+        const totalSeconds = Math.floor(diff / 1000);
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        daysSpan.textContent = days.toString().padStart(2, '0');
-        hoursSpan.textContent = hours.toString().padStart(2, '0');
-        minutesSpan.textContent = minutes.toString().padStart(2, '0');
-        secondsSpan.textContent = seconds.toString().padStart(2, '0');
+        countdownDiv.textContent = `${pad(days)} : ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+        updateColorBySeconds(totalSeconds);
     }
 
-    function stopTimer() {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
+    function startCountdown() {
+        stopCountdown();
+        if (!targetTime) return;
+        updateCountdown();
+        countdownInterval = setInterval(updateCountdown, 1000);
+    }
+
+    function stopCountdown() {
+        if (countdownInterval) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
         }
     }
 
-    function startTimer() {
-        stopTimer();
-        if (targetTime && targetTime > new Date()) {
-            timerInterval = setInterval(updateTimer, 1000);
-            updateTimer();
-        } else if (targetTime && targetTime <= new Date()) {
-            showBSOD();
-        }
-    }
-
-    function showBSOD() {
-        if (bsodActive) return;
-        bsodActive = true;
-        bsodScreen.classList.remove('hidden');
-        stopTimer();
-    }
-
-    function hideBSOD() {
-        bsodActive = false;
-        bsodScreen.classList.add('hidden');
-
-        if (targetTime && targetTime > new Date()) {
-            startTimer();
-        } else {
-
-            daysSpan.textContent = '00';
-            hoursSpan.textContent = '00';
-            minutesSpan.textContent = '00';
-            secondsSpan.textContent = '00';
-        }
-    }
-
-
-    function setTimerFromPicker() {
-        const dateStr = datetimePicker.value;
+    function setTargetFromPicker() {
+        const dateStr = targetDateInput.value;
         if (!dateStr) return;
-        targetTime = new Date(dateStr);
-        if (isNaN(targetTime)) {
+        const newTarget = new Date(dateStr);
+        if (isNaN(newTarget)) {
             alert('Пожалуйста, выберите корректную дату и время');
             return;
         }
-        if (bsodActive) {
-            hideBSOD();
-        }
-        startTimer();
-    }
+        targetTime = newTarget;
 
+        const formattedDate = targetTime.toLocaleString('ru-RU');
+        targetDateDisplay.textContent = `Цель: ${formattedDate}`;
+        startCountdown();
 
-
-    function resetBSOD() {
-        if (bsodActive) {
-            hideBSOD();
-        } else {
-            const now = new Date();
-            const nextYear = now.getFullYear() + 1;
-            const newYear = new Date(nextYear, 0, 1, 0, 0);
-            targetTime = newYear;
-            datetimePicker.value = newYear.toISOString().slice(0, 16);
-            startTimer();
-        }
-    }
-
-
-    setTimerBtn.addEventListener('click', setTimerFromPicker);
-    test10sBtn.addEventListener('click', setTest10s);
-    resetBsodBtn.addEventListener('click', resetBSOD);
-
-
-    bsodScreen.addEventListener('click', function() {
         hideBSOD();
-    });
-
-
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && bsodActive) {
-            hideBSOD();
-        }
-    });
-
-
-    setTimerFromPicker();
-});
-
-    const now = new Date();
-    const diff = TargetTime - now;
-
-    if (diff <= 0) {
-
-        stopTimer();
-        showBSOD();
-        return;
-    }
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    daysSpan.textcontent = days.toString().padStart(2, '0');
-    hoursSpan.textcontent = hours.toString().padStart(2, '0');
-    minutes.textcontent = minutes.toString().padStart(2, '0');
-    seconds.textcontent = seconds.toString().padStart(2, '0');
-}
-
-function stopTimer() {
-    if (TimerInterval) {
-        clearInterval(TimerInterval);
-        TimerInterval = null;
-    }
-}
-function startTimer() {
-    stopTimer();
-    if (targetTime && targetTime > new Date()) {
-        timerInterval = setInterval(UpdateTimer, 1000);
-        updateTimer();
-    }
-}
-
-function showBSOD() {
-    if (BsodActive) return;
-    BsodActive = true;
-    BsodScreen.classList.remove('hidden')
-    stopTimer()
-}
-
- function hideBSOD() {
-        bsodActive = false;
-        bsodScreen.classList.add('hidden');
-
-        if (targetTime && targetTime > new Date()) {
-            startTimer();
-        } else {
-
-            daysSpan.textContent = '00';
-            hoursSpan.textContent = '00';
-            minutesSpan.textContent = '00';
-            secondsSpan.textContent = '00';
-        }
-    }
-
-        function setTimerFromPicker() {
-        const dateStr = datetimePicker.value;
-        if (!dateStr) return;
-        targetTime = new Date(dateStr);
-        if (isNaN(targetTime)) {
-            alert('выберите корректную дату и время');
-            return;
-        }
-        if (bsodActive) {
-            hideBSOD();
-        }
-        startTimer();
-    }
- function setTest10s() {
-        const now = new Date();
-        targetTime = new Date(now.getTime() + 10000);
-        if (bsodActive) {
-            hideBSOD();
-        }
-        startTimer();
     }
 
 
-    function resetBSOD() {
-        if (bsodActive) {
-            hideBSOD();
-        } else {
-            const now = new Date();
-            const nextYear = now.getFullYear() + 1;
-            const newYear = new Date(nextYear, 0, 1, 0, 0);
-            targetTime = newYear;
-            datetimePicker.value = newYear.toISOString().slice(0, 16);
-            startTimer();
-        }
-    }
-
-
-    setTimerBtn.addEventListener('click', setTimerFromPicker);
-    test10sBtn.addEventListener('click', setTest10s);
-    resetBsodBtn.addEventListener('click', resetBSOD);
-
-
-    bsodScreen.addEventListener('click', function() {
+    function setTest10s() {
+        targetTime = new Date(Date.now() + 10000);
+        targetDateDisplay.textContent = `Цель: через 10 секунд (${targetTime.toLocaleString('ru-RU')})`;
+        startCountdown();
         hideBSOD();
-    });
+  
+        targetDateInput.value = targetTime.toISOString().slice(0, 16);
+    }
+
+   
+    function resetTimer() {
+        targetTime = null;
+        stopCountdown();
+        countdownDiv.textContent = '-- : -- : -- : --';
+        updateColorBySeconds(0);
+        targetDateDisplay.textContent = '';
+        targetDateInput.value = '';
+        hideBSOD();
+    }
 
 
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && bsodActive) {
+    function showBSOD() {
+        if (bsodOverlay) {
+            bsodOverlay.classList.remove('hidden');
+        }
+    }
+
+    function hideBSOD() {
+        if (bsodOverlay) {
+            bsodOverlay.classList.add('hidden');
+        }
+    }
+
+
+    setTargetBtn.addEventListener('click', setTargetFromPicker);
+    test10sBtn.addEventListener('click', setTest10s);
+    resetTimerBtn.addEventListener('click', resetTimer);
+
+    bsodOverlay.addEventListener('click', hideBSOD);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && bsodOverlay && !bsodOverlay.classList.contains('hidden')) {
             hideBSOD();
         }
     });
 
 
-    setTimerFromPicker();
+    startRealTime();
+
+    
+    resetTimer();
 });
