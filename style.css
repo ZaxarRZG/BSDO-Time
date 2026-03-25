@@ -7,7 +7,7 @@
     --primary: #3B82F6;
     --surface: #FFFFFF;
 }
-[data-theme="dark"]{
+[data-theme="dark-theme"]{
     /* Тёмная тема */
     --bg: #0F172A;
     --url: #3498db;
@@ -55,6 +55,7 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease; /* Плавный переход */
 }
 
+/* шапка */
 .TitleTime{
     padding: 10px; 
     display: flex;
@@ -66,6 +67,8 @@ body {
 #BSODTime{
     color: var(--text);
 }
+
+/* кнопки темы */
 #Btn-Them{
     margin-left: auto;
     color: var(--button)
@@ -73,6 +76,64 @@ body {
 #BtnThem{
     color: var(--text)
 }
+
+/* модальное окно */
+#ModalOverlay{
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    position: fixed;
+    background-color: var(--bg);
+
+    opacity: 0;
+    visibility: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: all 0.3s ease;
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+#modal-overlay.active{
+    opacity: 1;
+    visibility: visible;
+}
+.modal-content{
+    width: 90%;
+    padding: 30px;
+    max-width: 500px;
+    position: relative;
+    border-radius: 12px;
+    background: var(--bg);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.modal-overlay.active .modal-content{
+    transform: translateY(0);
+}
+.close-btn{
+    top: 10px;
+    right: 15px;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    background: none;
+    position: absolute;
+    color: var(--surface);
+    transition: color 0.2s;
+}
+.close-btn:hover{
+    color: #000;
+}
+
+/* часы - таймер */
 main{
     flex: 1;
     padding: 20px;
@@ -90,6 +151,7 @@ main{
     color: var(--text);
 }
 
+/* футер */
 footer{
     padding: 20px;
     display: flex;

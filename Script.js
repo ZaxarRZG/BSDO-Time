@@ -1,164 +1,161 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const realTimeDiv = document.getElementById('real-time');
-    const targetDateInput = document.getElementById('target-date');
-    const setTargetBtn = document.getElementById('set-target');
-    const test10sBtn = document.getElementById('test-10s');
-    const resetTimerBtn = document.getElementById('reset-timer');
-    const countdownDiv = document.getElementById('countdown');
-    const targetDateDisplay = document.getElementById('target-date-display');
-    const bsodOverlay = document.getElementById('bsod-overlay');
+    const clockDiv = document.getElementById('Сlock');
+    const dataDiv = document.getElementById('Data');
+    const testBtn = document.querySelector('button');
 
+    if (!clockDiv || !dataDiv) {
+        console.error('Элементы #clock или #Data не найдены');
+        return;
+    }
 
+    const controlPanel = document.createElement('div');
+    controlPanel.style.margin = '20px 0';
+    controlPanel.style.display = 'flex';
+    controlPanel.style.gap = '10px';
+    controlPanel.style.flexWrap = 'wrap';
+    controlPanel.style.justifyContent = 'center';
+
+    const dateInput = document.createElement('input');
+    dateInput.type = 'datetime-local';
+    dateInput.value = new Date(new Date().getFullYear() + 1, 0, 1, 0, 0).toISOString().slice(0, 16);
+
+    const setDateBtn = document.createElement('button');
+    setDateBtn.textContent = 'Установить дату';
+
+    const resetBtn = document.createElement('button');
+    resetBtn.textContent = 'Сброс (часы)';
+
+    controlPanel.appendChild(dateInput);
+    controlPanel.appendChild(setDateBtn);
+    controlPanel.appendChild(resetBtn);
+    document.querySelector('main').appendChild(controlPanel);
+
+    // Переменные
     let targetTime = null;
-    let countdownInterval = null;
-    let realTimeInterval = null;
-
+    let timerInterval = null;
+    let isTimerActive = false;
 
     const pad = (num) => num.toString().padStart(2, '0');
 
-    function updateRealTime() {
-        const now = new Date();
-        const hours = pad(now.getHours());
-        const minutes = pad(now.getMinutes());
-        const seconds = pad(now.getSeconds());
-        realTimeDiv.textContent = `${hours}:${minutes}:${seconds}`;
-    }
-
-
-    function startRealTime() {
-        updateRealTime();
-        if (realTimeInterval) clearInterval(realTimeInterval);
-        realTimeInterval = setInterval(updateRealTime, 1000);
-    }
-
-
     function updateColorBySeconds(secondsLeft) {
-        if (!countdownDiv) return;
-        let colorVar = '';
+        if (!clockDiv) return;
+        let color = '';
         if (secondsLeft <= 5) {
-            colorVar = 'var(--strength-1)'; // красный
+            color = '#D32F2F';
         } else if (secondsLeft <= 9) {
-            colorVar = 'var(--strength-2)'; // оранжевый
+            color = '#F57C00';
         } else if (secondsLeft <= 19) {
-            colorVar = 'var(--strength-3)'; // жёлтый
+            color = '#ffb300';
         } else if (secondsLeft <= 30) {
-            colorVar = 'var(--strength-4)'; // салатовый
+            color = '#AED581';
         } else {
-            colorVar = 'var(--strength-5)'; // зелёный
+            color = '#388E3C';
         }
-        countdownDiv.style.color = colorVar;
+        clockDiv.style.color = color;
     }
 
-    function updateCountdown() {
-        if (!targetTime) {
-            countdownDiv.textContent = '-- : -- : -- : --';
-            targetDateDisplay.textContent = '';
-            return;
-        }
+    function updateTimer() {
+        if (!targetTime) return;
 
         const now = new Date();
         const diff = targetTime - now;
 
         if (diff <= 0) {
-            stopCountdown();
-            showBSOD();
-            countdownDiv.textContent = '00 : 00 : 00 : 00';
+            stopTimer();
+            clockDiv.textContent = '00:00:00';
             updateColorBySeconds(0);
-            targetDateDisplay.textContent = '';
+            dataDiv.textContent = '00.00.0000';
+            alert('⏰ Время истекло!');
             return;
         }
 
         const totalSeconds = Math.floor(diff / 1000);
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-        countdownDiv.textContent = `${pad(days)} : ${pad(hours)} : ${pad(minutes)} : ${pad(seconds)}`;
+        clockDiv.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
         updateColorBySeconds(totalSeconds);
     }
 
-    function startCountdown() {
-        stopCountdown();
+    function startTimer() {
+        stopTimer();
         if (!targetTime) return;
-        updateCountdown();
-        countdownInterval = setInterval(updateCountdown, 1000);
+        updateTimer();
+        timerInterval = setInterval(updateTimer, 1000);
+        isTimerActive = true;
     }
 
-    function stopCountdown() {
-        if (countdownInterval) {
-            clearInterval(countdownInterval);
-            countdownInterval = null;
+    function stopTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
         }
+        isTimerActive = false;
     }
 
     function setTargetFromPicker() {
-        const dateStr = targetDateInput.value;
+        const dateStr = dateInput.value;
         if (!dateStr) return;
         const newTarget = new Date(dateStr);
         if (isNaN(newTarget)) {
-            alert('Пожалуйста, выберите корректную дату и время');
+            alert('Некорректная дата');
             return;
         }
         targetTime = newTarget;
-
-        const formattedDate = targetTime.toLocaleString('ru-RU');
-        targetDateDisplay.textContent = `Цель: ${formattedDate}`;
-        startCountdown();
-
-        hideBSOD();
+        const day = pad(targetTime.getDate());
+        const month = pad(targetTime.getMonth() + 1);
+        const year = targetTime.getFullYear();
+        dataDiv.textContent = `${day}.${month}.${year}`;
+        startTimer();
     }
 
-
-    function setTest10s() {
+    function test10Seconds() {
         targetTime = new Date(Date.now() + 10000);
-        targetDateDisplay.textContent = `Цель: через 10 секунд (${targetTime.toLocaleString('ru-RU')})`;
-        startCountdown();
-        hideBSOD();
-  
-        targetDateInput.value = targetTime.toISOString().slice(0, 16);
+        const day = pad(targetTime.getDate());
+        const month = pad(targetTime.getMonth() + 1);
+        const year = targetTime.getFullYear();
+        dataDiv.textContent = `${day}.${month}.${year}`;
+        startTimer();
+        dateInput.value = targetTime.toISOString().slice(0, 16);
     }
 
-   
-    function resetTimer() {
+    function resetToRealTime() {
+        stopTimer();
         targetTime = null;
-        stopCountdown();
-        countdownDiv.textContent = '-- : -- : -- : --';
-        updateColorBySeconds(0);
-        targetDateDisplay.textContent = '';
-        targetDateInput.value = '';
-        hideBSOD();
+        isTimerActive = false;
+        updateRealTime();
+        if (!realTimeInterval) startRealTime();
+        dataDiv.textContent = '--.--.----';
+        clockDiv.style.color = '';
     }
 
-
-    function showBSOD() {
-        if (bsodOverlay) {
-            bsodOverlay.classList.remove('hidden');
+    let realTimeInterval = null;
+    function updateRealTime() {
+        const now = new Date();
+        const hours = pad(now.getHours());
+        const minutes = pad(now.getMinutes());
+        const seconds = pad(now.getSeconds());
+        clockDiv.textContent = `${hours}:${minutes}:${seconds}`;
+        clockDiv.style.color = 'white';
+    }
+    function startRealTime() {
+        if (realTimeInterval) clearInterval(realTimeInterval);
+        updateRealTime();
+        realTimeInterval = setInterval(updateRealTime, 1000);
+    }
+    function stopRealTime() {
+        if (realTimeInterval) {
+            clearInterval(realTimeInterval);
+            realTimeInterval = null;
         }
     }
-
-    function hideBSOD() {
-        if (bsodOverlay) {
-            bsodOverlay.classList.add('hidden');
-        }
-    }
-
-
-    setTargetBtn.addEventListener('click', setTargetFromPicker);
-    test10sBtn.addEventListener('click', setTest10s);
-    resetTimerBtn.addEventListener('click', resetTimer);
-
-    bsodOverlay.addEventListener('click', hideBSOD);
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && bsodOverlay && !bsodOverlay.classList.contains('hidden')) {
-            hideBSOD();
-        }
-    });
-
 
     startRealTime();
 
-    
-    resetTimer();
+
+    if (testBtn) testBtn.addEventListener('click', test10Seconds);
+    setDateBtn.addEventListener('click', setTargetFromPicker);
+    resetBtn.addEventListener('click', resetToRealTime);
 });

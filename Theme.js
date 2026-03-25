@@ -1,26 +1,25 @@
-        const body = document.body;
-        const toggleButton = document.getElementById('BtnThem');
-        const themeSpan = document.getElementById('current-theme');
+document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+    const themeBtn = document.getElementById('BtnTheme');
+
+    if (!themeBtn) {
+        console.warn('Кнопка темы #BtnTheme не найдена');
+        return;
+    }
+
+    function setTheme(theme) {
+        body.classList.remove('light-theme', 'dark-theme');
+        body.classList.add(theme + '-theme');
+        localStorage.setItem('theme', theme);
+    }
+
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
 
 
-        function setTheme(theme) {
-
-            body.classList.remove('light-theme', 'dark-theme');
-
-            body.classList.add(theme + '-theme');
-
-            themeSpan.textContent = theme === 'light' ? 'светлая' : 'тёмная';
-
-            localStorage.setItem('theme', theme);
-        }
-
-
-        const savedTheme = localStorage.getItem('theme') || 'light'; // по умолчанию светлая
-        setTheme(savedTheme);
-
-
-        toggleButton.addEventListener('click', () => {
-            const currentTheme = body.classList.contains('light-theme') ? 'light' : 'dark';
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            setTheme(newTheme);
-        });
+    themeBtn.addEventListener('click', () => {
+        const currentTheme = body.classList.contains('light-theme') ? 'light' : 'dark';
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        setTheme(newTheme);
+    });
+});
