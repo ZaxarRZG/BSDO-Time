@@ -1,161 +1,134 @@
-document.addEventListener('DOMContentLoaded', () => {
+let countdownInterval = null;
+let moscowInterval = null;
+let timeLeft = 0;
+let originalDuration = 0;
+let isTimerActive = false;
 
-    const clockDiv = document.getElementById('Сlock');
-    const dataDiv = document.getElementById('Data');
-    const testBtn = document.querySelector('button');
+const clockElement = document.getElementById('Clock');
+const dateElement = document.getElementById('Data');
+const testBtn = document.getElementById('test-10s');
+const bsodOverlay = document.getElementById('bsod-overlay');
+const bsodImage = document.getElementById('bsod-image');
 
-    if (!clockDiv || !dataDiv) {
-        console.error('Элементы #clock или #Data не найдены');
+function updateMoscowTime() {
+    const now = new Date();
+    const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
+    
+    const hours = String(moscowTime.getHours()).padStart(2, '0');
+    const minutes = String(moscowTime.getMinutes()).padStart(2, '0');
+    const seconds = String(moscowTime.getSeconds()).padStart(2, '0');
+    const ms = String(moscowTime.getMilliseconds()).padStart(3, '0');
+    
+    const day = String(moscowTime.getDate()).padStart(2, '0');
+    const month = String(moscowTime.getMonth() + 1).padStart(2, '0');
+    const year = moscowTime.getFullYear();
+    
+    clockElement.textContent = `${hours}:${minutes}:${seconds}:${ms}`;
+    dateElement.textContent = `${day}.${month}.${year}`;
+}
+
+function startMoscowClock() {
+    if (moscowInterval) clearInterval(moscowInterval);
+    updateMoscowTime();
+    moscowInterval = setInterval(updateMoscowTime, 10);
+    isTimerActive = false;
+}
+
+function stopMoscowClock() {
+    if (moscowInterval) {
+        clearInterval(moscowInterval);
+        moscowInterval = null;
+    }
+    isTimerActive = true;
+}
+
+function formatTimerTime(seconds) {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function getBSODPath() {
+    return 'images/bsod-win11.png';
+}
+
+function showBSOD() {
+    bsodImage.src = getBSODPath();
+    bsodOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+
+function startCountdown(totalSeconds) {
+
+    if (countdownInterval) clearInterval(countdownInterval);
+    
+    if (totalSeconds <= 0) {
+        alert('⚠️ Введите время больше 0!');
         return;
     }
-
-    const controlPanel = document.createElement('div');
-    controlPanel.style.margin = '20px 0';
-    controlPanel.style.display = 'flex';
-    controlPanel.style.gap = '10px';
-    controlPanel.style.flexWrap = 'wrap';
-    controlPanel.style.justifyContent = 'center';
-
-    const dateInput = document.createElement('input');
-    dateInput.type = 'datetime-local';
-    dateInput.value = new Date(new Date().getFullYear() + 1, 0, 1, 0, 0).toISOString().slice(0, 16);
-
-    const setDateBtn = document.createElement('button');
-    setDateBtn.textContent = 'Установить дату';
-
-    const resetBtn = document.createElement('button');
-    resetBtn.textContent = 'Сброс (часы)';
-
-    controlPanel.appendChild(dateInput);
-    controlPanel.appendChild(setDateBtn);
-    controlPanel.appendChild(resetBtn);
-    document.querySelector('main').appendChild(controlPanel);
-
-    // Переменные
-    let targetTime = null;
-    let timerInterval = null;
-    let isTimerActive = false;
-
-    const pad = (num) => num.toString().padStart(2, '0');
-
-    function updateColorBySeconds(secondsLeft) {
-        if (!clockDiv) return;
-        let color = '';
-        if (secondsLeft <= 5) {
-            color = '#D32F2F';
-        } else if (secondsLeft <= 9) {
-            color = '#F57C00';
-        } else if (secondsLeft <= 19) {
-            color = '#ffb300';
-        } else if (secondsLeft <= 30) {
-            color = '#AED581';
-        } else {
-            color = '#388E3C';
-        }
-        clockDiv.style.color = color;
-    }
-
-    function updateTimer() {
-        if (!targetTime) return;
-
-        const now = new Date();
-        const diff = targetTime - now;
-
-        if (diff <= 0) {
-            stopTimer();
-            clockDiv.textContent = '00:00:00';
-            updateColorBySeconds(0);
-            dataDiv.textContent = '00.00.0000';
-            alert('⏰ Время истекло!');
+    
+    
+    stopMoscowClock();
+    
+    originalDuration = totalSeconds;
+    timeLeft = totalSeconds;
+    
+    testBtn.disabled = true;
+    const btnTimer = document.getElementById('BtnTimer');
+    if (btnTimer) btnTimer.disabled = true;
+    
+    clockElement.textContent = formatTimerTime(timeLeft);
+    dateElement.textContent = 'Обратный отсчёт';
+    
+    function tick() {
+        clockElement.textContent = formatTimerTime(timeLeft);
+        
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            dateElement.textContent = 'ВРЕМЯ ВЫШЛО!';
+            setTimeout(showBSOD, 300);
+            resetTimerUI();
             return;
         }
-
-        const totalSeconds = Math.floor(diff / 1000);
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        clockDiv.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-        updateColorBySeconds(totalSeconds);
+        
+        timeLeft--;
     }
+    
+    tick();
+    countdownInterval = setInterval(tick, 1000);
+}
 
-    function startTimer() {
-        stopTimer();
-        if (!targetTime) return;
-        updateTimer();
-        timerInterval = setInterval(updateTimer, 1000);
-        isTimerActive = true;
+function resetTimerUI() {
+    testBtn.disabled = false;
+    const btnTimer = document.getElementById('BtnTimer');
+    if (btnTimer) btnTimer.disabled = false;
+    
+    startMoscowClock();
+}
+
+window.startTimerFromModal = function(hours, minutes, seconds) {
+    const total = hours * 3600 + minutes * 60 + seconds;
+    if (countdownInterval) clearInterval(countdownInterval);
+    startCountdown(total);
+};
+
+window.resetTimer = function() {
+    if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
     }
+    bsodOverlay.classList.add('hidden');
+    document.body.style.overflow = '';
+    resetTimerUI();
+};
 
-    function stopTimer() {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
-        isTimerActive = false;
+startMoscowClock();
+
+testBtn.addEventListener('click', () => {
+    if (confirm('Запустить тест на 10 секунд?')) {
+        startCountdown(10);
     }
-
-    function setTargetFromPicker() {
-        const dateStr = dateInput.value;
-        if (!dateStr) return;
-        const newTarget = new Date(dateStr);
-        if (isNaN(newTarget)) {
-            alert('Некорректная дата');
-            return;
-        }
-        targetTime = newTarget;
-        const day = pad(targetTime.getDate());
-        const month = pad(targetTime.getMonth() + 1);
-        const year = targetTime.getFullYear();
-        dataDiv.textContent = `${day}.${month}.${year}`;
-        startTimer();
-    }
-
-    function test10Seconds() {
-        targetTime = new Date(Date.now() + 10000);
-        const day = pad(targetTime.getDate());
-        const month = pad(targetTime.getMonth() + 1);
-        const year = targetTime.getFullYear();
-        dataDiv.textContent = `${day}.${month}.${year}`;
-        startTimer();
-        dateInput.value = targetTime.toISOString().slice(0, 16);
-    }
-
-    function resetToRealTime() {
-        stopTimer();
-        targetTime = null;
-        isTimerActive = false;
-        updateRealTime();
-        if (!realTimeInterval) startRealTime();
-        dataDiv.textContent = '--.--.----';
-        clockDiv.style.color = '';
-    }
-
-    let realTimeInterval = null;
-    function updateRealTime() {
-        const now = new Date();
-        const hours = pad(now.getHours());
-        const minutes = pad(now.getMinutes());
-        const seconds = pad(now.getSeconds());
-        clockDiv.textContent = `${hours}:${minutes}:${seconds}`;
-        clockDiv.style.color = 'white';
-    }
-    function startRealTime() {
-        if (realTimeInterval) clearInterval(realTimeInterval);
-        updateRealTime();
-        realTimeInterval = setInterval(updateRealTime, 1000);
-    }
-    function stopRealTime() {
-        if (realTimeInterval) {
-            clearInterval(realTimeInterval);
-            realTimeInterval = null;
-        }
-    }
-
-    startRealTime();
-
-
-    if (testBtn) testBtn.addEventListener('click', test10Seconds);
-    setDateBtn.addEventListener('click', setTargetFromPicker);
-    resetBtn.addEventListener('click', resetToRealTime);
 });

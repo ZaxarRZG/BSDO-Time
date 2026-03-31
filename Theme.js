@@ -1,25 +1,29 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const body = document.body;
-    const themeBtn = document.getElementById('BtnTheme');
 
-    if (!themeBtn) {
-        console.warn('Кнопка темы #BtnTheme не найдена');
-        return;
+const themeBtn = document.getElementById('BtnTheme');
+const body = document.body;
+
+// Загрузка сохранённой темы
+function loadTheme() {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+        body.classList.add('dark');
     }
+}
 
-    function setTheme(theme) {
-        body.classList.remove('light-theme', 'dark-theme');
-        body.classList.add(theme + '-theme');
-        localStorage.setItem('theme', theme);
+// Переключение темы
+function toggleTheme() {
+    body.classList.toggle('dark');
+    const isDark = body.classList.contains('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+
+loadTheme();
+themeBtn.addEventListener('click', toggleTheme);
+
+// T
+document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 't' && !e.target.matches('input')) {
+        toggleTheme();
     }
-
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
-
-
-    themeBtn.addEventListener('click', () => {
-        const currentTheme = body.classList.contains('light-theme') ? 'light' : 'dark';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-    });
 });

@@ -99,14 +99,15 @@ body {
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
 }
-#modal-overlay.active{
+#ModalOverlay.active{
     opacity: 1;
     visibility: visible;
 }
-.modal-content{
+#ModalContent{
     width: 90%;
     padding: 30px;
     max-width: 500px;
+    color: var(--text);
     position: relative;
     border-radius: 12px;
     background: var(--bg);
@@ -115,21 +116,28 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
-.modal-overlay.active .modal-content{
+#TimeSet{
+    display: flex;
+    text-align: left;
+    margin-right: auto;
+}
+
+#ModalOverlay.active #ModalContent{
     transform: translateY(0);
 }
-.close-btn{
+#closebtn{
     top: 10px;
     right: 15px;
     border: none;
     font-size: 24px;
     cursor: pointer;
     background: none;
+    margin-left: auto;
     position: absolute;
     color: var(--surface);
     transition: color 0.2s;
 }
-.close-btn:hover{
+#close-btn:hover{
     color: #000;
 }
 

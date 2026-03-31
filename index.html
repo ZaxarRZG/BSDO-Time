@@ -28,12 +28,20 @@
     
     <!-- модальное окно -->
     <div class="modal-overlay" id="ModalOverlay">
-      <button class="close-btn" id="closeBtn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6.707 5.293l5.293 5.292l5.293 -5.292a1 1 0 0 1 1.414 1.414l-5.292 5.293l5.292 5.293a1 1 0 0 1 -1.414 1.414l-5.293 -5.292l-5.293 5.292a1 1 0 1 1 -1.414 -1.414l5.292 -5.293l-5.292 -5.293a1 1 0 0 1 1.414 -1.414" /></svg>
-      </button>
-      <div class="modal-content">
-           <h2>установка таймера</h2>
-           <p>да бля не робит</p>
+      <div id="ModalContent">
+          <button class="close-btn" id="closeBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6.707 5.293l5.293 5.292l5.293 -5.292a1 1 0 0 1 1.414 1.414l-5.292 5.293l5.292 5.293a1 1 0 0 1 -1.414 1.414l-5.293 -5.292l-5.293 5.292a1 1 0 1 1 -1.414 -1.414l5.292 -5.293l-5.292 -5.293a1 1 0 0 1 1.414 -1.414" /></svg>
+          </button>
+          <h2 id="TimeSet">установка таймера</h2>
+          <div id="Input">
+            <input type="time" id="TimeInput" name="time">
+            <input type="date" id="DataInput" name="data"> 
+            <input type="checkbox" id="CheckboxRepeat" name="repeat">
+            <button class="Btn" id="AddTimeBtn">Установить Таймер</button>
+            <table class="Tbe" id="TableBase">
+              <!-- здеся таблица БД -->
+            </table>
+          </div>
       </div>
     </div>
   </Main>
