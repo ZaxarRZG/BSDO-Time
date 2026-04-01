@@ -38,8 +38,21 @@
             <input type="date" id="DataInput" name="data"> 
             <input type="checkbox" id="CheckboxRepeat" name="repeat">
             <button class="Btn" id="AddTimeBtn">Установить Таймер</button>
-            <table class="Tbe" id="TableBase">
-              <!-- здеся таблица БД -->
+            <!-- Таблица данных с GitHub -->
+            <table class="TbeGit" id="TbeGitData">
+              <thead id="TbeHead">
+                <tr>
+                  <th id="NumberTH">№</th>
+                  <th id="NameTH">Имя</th>
+                  <th id="TimeTH">Время</th>
+                  <th id="DataTH">Дата</th>
+                  <th id="BtnTH">Кнопочки</th>
+                </tr>
+              </thead>
+              <tbody id="GitData">
+                <!-- здеся данные -->
+                 <tr><td colspan="5" style="text-align:center;">Загрузка...</td></tr>
+              </tbody>
             </table>
           </div>
       </div>
@@ -49,7 +62,7 @@
   <!-- футер -->
   <footer>
     <div id="copyright">
-      &copy; <span id="CurrentYear"></span> :)
+      &copy; <span id="CurrentYear"></span> :) хуй
     </div>
     <div id="Avtors">
       <p>by <a href="https://github.com/ZaxarRZG" target="_blank">ZaharRZG</a> & 

@@ -18,11 +18,11 @@
 }
 [Data-Clock="color"]{
     /* цвета таймера */
-    --strength-1: #D32F2F; /* 5 - 0 секунд */
-    --strength-2: #F57C00; /* 9 - 5 секунд */
-    --strength-3: #ffb300; /* 19 - 10 секунд */
-    --strength-4: #AED581; /* 30 - 20 секунд */
-    --strength-5: #388E3C; /* постоянно если есть условие */
+    --TimerColor-1: #D32F2F; /* 5 - 0 секунд */
+    --TimerColor-2: #F57C00; /* 9 - 5 секунд */
+    --TimerColor-3: #ffb300; /* 19 - 10 секунд */
+    --TimerColor-4: #AED581; /* 30 - 20 секунд */
+    --TimerColor-5: #388E3C; /* постоянно если есть условие */
 }
 @font-face {
     font-style: normal;
@@ -140,6 +140,24 @@ body {
 #close-btn:hover{
     color: #000;
 }
+/* таблица */
+#TbeGitData{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.TbeGit th, .TbeGit td{
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+}
+
+#TbeGitData th{
+    background-color: var(--bg);
+    font-weight: 600;
+    color: var(--text);
+}
 
 /* часы - таймер */
 main{
@@ -167,7 +185,6 @@ footer{
     text-align: center;
     color: var(--text);
     background-color: var(--surface);
-    
 }
 #copyright{
     margin-right:auto ;
