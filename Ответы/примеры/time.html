@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Часы с миллисекундами</title>
+    <style>
+        /* CSS: Стили для красоты */
+        body {
+            background-color: #1a1a1a; /* Темный фон */
+            color: #00ffcc; /* Неоновый цвет текста */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace; /* Моноширинный шрифт обязателен! */
+        }
+
+        .clock-container {
+            font-size: 4rem; /* Размер шрифта */
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(0, 255, 204, 0.5); /* Неоновое свечение */
+        }
+
+        /* Разделяем миллисекунды визуально */
+        .milliseconds {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin-left: 10px;
+            vertical-align: super; /* Поднять чуть выше */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HTML: Каркас часов -->
+    <div class="clock-container">
+        <span id="main-time">00:00:00</span><span id="ms-time" class="milliseconds">000</span>
+    </div>
+
+    <script>
+        // JS: Логика работы часов
+        function updateClock() {
+            const now = new Date();
+
+            // Получаем часы, минуты и секунды
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            // Получаем миллисекунды (они от 0 до 999)
+            const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
+
+            // Собираем строку времени
+            const timeString = `${hours}:${minutes}:${seconds}`;
+
+            // Находим элементы на странице и обновляем их
+            document.getElementById('main-time').textContent = timeString;
+            document.getElementById('ms-time').textContent = milliseconds;
+        }
+
+        // Запускаем функцию обновления каждые 10 миллисекунд (для плавности)
+        setInterval(updateClock, 10);
+
+        // Запускаем один раз сразу, чтобы не ждать 10мс при загрузке
+        updateClock();
+    </script>
+</body>
+</html>

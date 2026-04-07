@@ -55,6 +55,16 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease; /* Плавный переход */
 }
 
+#fullscreenArea:fullscreen {
+  background: #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  text-align: center;
+}
+
 /* шапка */
 .TitleTime{
     padding: 10px; 
@@ -125,7 +135,7 @@ body {
 #ModalOverlay.active #ModalContent{
     transform: translateY(0);
 }
-#closebtn{
+#closeBtn{
     top: 10px;
     right: 15px;
     border: none;
@@ -137,9 +147,18 @@ body {
     color: var(--surface);
     transition: color 0.2s;
 }
-#close-btn:hover{
-    color: #000;
+
+/* Изменить цвет */
+.icon-tabler-x {
+  color: var(--text); 
 }
+
+/* Анимация при наведении */
+.icon-tabler-x:hover {
+  transform: rotate(90deg);
+  transition: transform 0.2s;
+}
+
 /* таблица */
 #TbeGitData{
     width: 100%;
