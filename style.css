@@ -1,41 +1,58 @@
 :root {
-    /* Светлая тема */
-    --bg: #F8FAFC;
-    --url: #3498db;
-    --text: #1E293B;
-    --button: #E2E8F0;
-    --primary: #3B82F6;
-    --surface: #FFFFFF;
+  /* Светлая тема (по умолчанию) */
+  --bg: #F2F3F5;
+  --url: #0055FF;
+  --text: #313338;
+  --button: #E3E5E8;
+  --primary: #5865F2;
+  --surface: #FFFFFF;
+  --bgbtntest: #0051ad;
+  --border-color: #E3E5E8;
 }
-[data-theme="dark-theme"]{
-    /* Тёмная тема */
-    --bg: #0F172A;
-    --url: #3498db;
-    --text: #F1F5F9;
-    --button: #334155;
-    --primary: #60A5FA;
-    --surface: #1E293B;
+
+body.dark {
+  /* Тёмная тема */
+  --bg: #313338;
+  --url: #00A8FC;
+  --text: #DBDEE1;
+  --button: #404249;
+  --primary: #5865F2;
+  --surface: #2B2D31;
+  --bgbtntest: #0051ad;
+  --border-color: #404249;
 }
-[Data-Clock="color"]{
-    /* цвета таймера */
-    --TimerColor-1: #D32F2F; /* 5 - 0 секунд */
-    --TimerColor-2: #F57C00; /* 9 - 5 секунд */
-    --TimerColor-3: #ffb300; /* 19 - 10 секунд */
-    --TimerColor-4: #AED581; /* 30 - 20 секунд */
-    --TimerColor-5: #388E3C; /* постоянно если есть условие */
+
+[data-clock="color"] {
+  --TimerColor-1: #D32F2F; /* 5 - 0 секунд */
+  --TimerColor-2: #F57C00; /* 9 - 5 секунд */
+  --TimerColor-3: #ffb300; /* 19 - 10 секунд */
+  --TimerColor-4: #AED581; /* 30 - 20 секунд */
+  --TimerColor-5: #388E3C; /* постоянно если есть условие */
 }
+.Clock-Container {
+    color: var(--TimerColor-5)
+    /* transition: color 0.3s ease; */
+}
+
+.timer-color-1 {color: var(--TimerColor-1) !important;}
+.timer-color-2 {color: var(--TimerColor-2) !important;}
+.timer-color-3 {color: var(--TimerColor-3) !important;}
+.timer-color-4 {color: var(--TimerColor-4) !important;}
+.timer-color-5 {color: var(--TimerColor-5) !important;}
+
 @font-face {
-    font-style: normal;
-    font-display: swap;
-    font-weight: normal;
-    font-family: 'NewFonts';
-    src: url('./fonts/Rodchenko reg.otf') format('otf');
+  font-style: normal;
+  font-display: swap;
+  font-weight: normal;
+  font-family: 'NewFonts';
+  src: url('./fonts/Rodchenko reg.otf') format('opentype');
 }
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
@@ -148,15 +165,70 @@ body {
     transition: color 0.2s;
 }
 
+/* кнопки теста */
+.Test{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+
+}
+.Test10s{
+    /* размеры */
+    font-size: 18px;
+    line-height: 1.2;
+    padding: 14px 36px;
+    text-align: center;
+    box-sizing: border-box;
+
+    /* цвет */
+    cursor: pointer;
+    transition: 0.2s;
+    color: #ffffff;
+    border-radius: 10px;
+    background: var(--bgbtntest);
+}
+.Test1min{
+    /* размеры */
+    font-size: 18px;
+    line-height: 1.2;
+    padding: 14px 36px;
+    text-align: center;
+    box-sizing: border-box;
+
+    /* цвет */
+    cursor: pointer;
+    transition: 0.2s;
+    color: #ffffff;
+    border-radius: 10px;
+    background: var(--bgbtntest);
+}
+.Test10min{
+    /* размеры */
+    font-size: 18px;
+    line-height: 1.2;
+    padding: 14px 36px;
+    text-align: center;
+    box-sizing: border-box;
+
+    /* цвет */
+    cursor: pointer;
+    transition: 0.2s;
+    color: #ffffff;
+    border-radius: 10px;
+    background: var(--bgbtntest);
+}
+
+
 /* Изменить цвет */
 .icon-tabler-x {
   color: var(--text); 
+  transition: transform 0.2s;
 }
 
 /* Анимация при наведении */
 .icon-tabler-x:hover {
   transform: rotate(90deg);
-  transition: transform 0.2s;
 }
 
 /* таблица */
@@ -169,7 +241,7 @@ body {
 .TbeGit th, .TbeGit td{
     padding: 12px 15px;
     text-align: left;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid var(--border-color);
 }
 
 #TbeGitData th{
@@ -183,7 +255,6 @@ main{
     flex: 1;
     padding: 20px;
     text-align: center;
-    background: var(--bg);
 }
 .Clock-Container{
     font-size: 5rem;

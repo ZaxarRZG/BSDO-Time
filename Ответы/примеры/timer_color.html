@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Цветной Таймер</title>
+<style>
+  :root {
+    --TimerColor-1: #D32F2F;  /* 5 - 0 секунд */
+    --TimerColor-2: #F57C00;  /* 9 - 5 секунд */
+    --TimerColor-3: #ffb300;  /* 19 - 10 секунд */
+    --TimerColor-4: #AED581;  /* 30 - 20 секунд */
+    --TimerColor-5: #388E3C;  /* 30+ секунд */
+
+    --currentColor: var(--TimerColor-5);
+    --glow-color: var(--TimerColor-5);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #1a1a2e;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+    transition: background 0.8s ease;
+  }
+
+  .timer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
+
+  /* ─── Круговой прогресс ─── */
+  .timer-circle {
+    position: relative;
+    width: 280px;
+    height: 280px;
+  }
+
+  .timer-circle svg {
+    transform: rotate(-90deg);
+    width: 280px;
+    height: 280px;
+  }
+
+  .timer-circle .bg-ring {
+    fill: none;
+    stroke: #2a2a4a;
+    stroke-width: 8;
+  }
+
+  .timer-circle .progress-ring {
+    fill: none;
+    stroke: var(--currentColor);
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke 0.6s ease, stroke-dashoffset 0.3s linear;
+    filter: drop-shadow(0 0 12px var(--glow-color));
+  }
+
+  .timer-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .timer-display .time {
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--currentColor);
+    transition: color 0.6s ease, text-shadow 0.6s ease;
+    text-shadow: 0 0 20px var(--glow-color);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timer-display .label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 5px;
+  }
+
+  /* ─── Пульсация при малом времени ─── */
+  .timer-circle.pulse .time {
+    animation: pulse-text 0.5s ease-in-out infinite alternate;
+  }
+
+  .timer-circle.pulse .progress-ring {
+    animation: pulse-ring 0.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse-text {
+    from { opacity: 1; }
+    to   { opacity: 0.4; }
+  }
+
+  @keyframes pulse-ring {
+    from { filter: drop-shadow(0 0 12px var(--glow-color)); }
+    to   { filter: drop-shadow(0 0 25px var(--glow-color)); }
+  }
+
+  /* ─── Управление ─── */
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    padding: 12px 28px;
+    border: 2px solid var(--currentColor);
+    border-radius: 50px;
+    background: transparent;
+    color: var(--currentColor);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .btn:hover {
+    background: var(--currentColor);
+    color: #1a1a2e;
+    box-shadow: 0 0 20px var(--glow-color);
+  }
+
+  .btn:active {
+    transform: scale(0.95);
+  }
+
+  /* ─── Ввод времени ─── */
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .input-group label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .input-group input {
+    width: 70px;
+    padding: 8px 12px;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 1rem;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+
+  .input-group input:focus {
+    border-color: var(--currentColor);
+  }
+
+  /* ─── Легенда цветов ─── */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ─── Цвет фона страницы ─── */
+  body.bg-1 { background: #2a0a0a; }
+  body.bg-2 { background: #2a1505; }
+  body.bg-3 { background: #2a2200; }
+  body.bg-4 { background: #1a2a10; }
+  body.bg-5 { background: #0a200a; }
+</style>
+</head>
+<body>
+
+<div class="timer-container">
+
+  <!-- Ввод времени -->
+  <div class="input-group">
+    <label>Минуты:</label>
+    <input type="number" id="inputMin" value="1" min="0" max="99">
+    <label>Секунды:</label>
+    <input type="number" id="inputSec" value="35" min="0" max="59">
+  </div>
+
+  <!-- Таймер -->
+  <div class="timer-circle" id="timerCircle">
+    <svg viewBox="0 0 280 280">
+      <circle class="bg-ring" cx="140" cy="140" r="124"/>
+      <circle class="progress-ring" id="progressRing" cx="140" cy="140" r="124"/>
+    </svg>
+    <div class="timer-display">
+      <div class="time" id="timerDisplay">00:00</div>
+      <div class="label" id="statusLabel">готов</div>
+    </div>
+  </div>
+
+  <!-- Кнопки -->
+  <div class="controls">
+    <button class="btn" id="btnStart">Старт</button>
+    <button class="btn" id="btnPause">Пауза</button>
+    <button class="btn" id="btnReset">Сброс</button>
+  </div>
+
+  <!-- Легенда -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#388E3C"></div>
+      30с+
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#AED581"></div>
+      20–29с
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#ffb300"></div>
+      10–19с
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#F57C00"></div>
+      5–9с
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#D32F2F"></div>
+      0–4с
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── Элементы ───
+  const display    = document.getElementById('timerDisplay');
+  const ring       = document.getElementById('progressRing');
+  const circle     = document.getElementById('timerCircle');
+  const statusLbl  = document.getElementById('statusLabel');
+  const btnStart   = document.getElementById('btnStart');
+  const btnPause   = document.getElementById('btnPause');
+  const btnReset   = document.getElementById('btnReset');
+  const inputMin   = document.getElementById('inputMin');
+  const inputSec   = document.getElementById('inputSec');
+  const root       = document.documentElement;
+
+  // ─── Длина окружности ───
+  const radius     = 124;
+  const circumference = 2 * Math.PI * radius;
+  ring.style.strokeDasharray  = circumference;
+  ring.style.strokeDashoffset = 0;
+
+  // ─── Состояние ───
+  let totalSeconds  = 0;
+  let remaining     = 0;
+  let interval      = null;
+  let isRunning     = false;
+
+  // ─── Цветовые зоны ───
+  const colorZones = [
+    { min: 0,   max: 4,  color: 'var(--TimerColor-1)', bgClass: 'bg-1', label: 'КРАСНЫЙ' },
+    { min: 5,   max: 9,  color: 'var(--TimerColor-2)', bgClass: 'bg-2', label: 'ОРАНЖЕВЫЙ' },
+    { min: 10,  max: 19, color: 'var(--TimerColor-3)', bgClass: 'bg-3', label: 'ЖЁЛТЫЙ' },
+    { min: 20,  max: 29, color: 'var(--TimerColor-4)', bgClass: 'bg-4', label: 'САЛАТОВЫЙ' },
+    { min: 30,  max: Infinity, color: 'var(--TimerColor-5)', bgClass: 'bg-5', label: 'ЗЕЛЁНЫЙ' }
+  ];
+
+  // ─── Получить цвет по секундам ───
+  function getZone(seconds) {
+    return colorZones.find(z => seconds >= z.min && seconds <= z.max) || colorZones[4];
+  }
+
+  // ─── Обновить цвет ───
+  function applyColor(seconds) {
+    const zone = getZone(seconds);
+    root.style.setProperty('--currentColor', zone.color);
+    root.style.setProperty('--glow-color', zone.color);
+
+    // Фон страницы
+    document.body.className = zone.bgClass;
+
+    // Пульсация при ≤ 5 сек
+    if (seconds <= 5) {
+      circle.classList.add('pulse');
+    } else {
+      circle.classList.remove('pulse');
+    }
+  }
+
+  // ─── Форматирование ───
+  function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  // ─── Обновить дисплей ───
+  function render() {
+    display.textContent = formatTime(remaining);
+
+    // Прогресс кольца
+    const progress = totalSeconds > 0 ? (totalSeconds - remaining) / totalSeconds : 0;
+    const offset = circumference * (1 - progress);
+    ring.style.strokeDashoffset = offset;
+
+    // Цвет
+    applyColor(remaining);
+
+    // Статус
+    if (remaining === 0 && totalSeconds > 0) {
+      statusLbl.textContent = 'время вышло!';
+    } else if (isRunning) {
+      statusLbl.textContent = 'работает';
+    } else {
+      statusLbl.textContent = 'готов';
+    }
+  }
+
+  // ─── Тик ───
+  function tick() {
+    if (remaining <= 0) {
+      stop();
+      render();
+      // Можно добавить звук
+      return;
+    }
+    remaining--;
+    render();
+  }
+
+  // ─── Старт ───
+  function start() {
+    if (isRunning) return;
+
+    if (remaining === 0) {
+      const m = parseInt(inputMin.value) || 0;
+      const s = parseInt(inputSec.value) || 0;
+      totalSeconds = m * 60 + s;
+      remaining = totalSeconds;
+      if (totalSeconds === 0) return;
+    }
+
+    isRunning = true;
+    render();
+    interval = setInterval(tick, 1000);
+  }
+
+  // ─── Стоп ───
+  function stop() {
+    isRunning = false;
+    clearInterval(interval);
+    interval = null;
+  }
+
+  // ─── Сброс ───
+  function reset() {
+    stop();
+    const m = parseInt(inputMin.value) || 0;
+    const s = parseInt(inputSec.value) || 0;
+    totalSeconds = m * 60 + s;
+    remaining = totalSeconds;
+    ring.style.strokeDashoffset = 0;
+    render();
+
+    // Если таймер не запущен — показать начальное значение
+    if (totalSeconds === 0) {
+      display.textContent = '00:00';
+    }
+  }
+
+  // ─── События ───
+  btnStart.addEventListener('click', start);
+  btnPause.addEventListener('click', stop);
+  btnReset.addEventListener('click', reset);
+
+  // Обновление при изменении ввода
+  inputMin.addEventListener('change', () => { if (!isRunning) reset(); });
+  inputSec.addEventListener('change', () => { if (!isRunning) reset(); });
+
+  // ─── Инициализация ───
+  reset();
+</script>
+</body>
+</html>

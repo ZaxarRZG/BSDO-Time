@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalOverlay = document.getElementById('ModalOverlay');
     const closeBtn = document.querySelector('#closeBtn');
 
-    console.log('🔍 Элементы:', { openBtn, modalOverlay, closeBtn });
+    // console.log('🔍 Элементы:', { openBtn, modalOverlay, closeBtn });
 
     if (!openBtn || !modalOverlay || !closeBtn) {
         console.error('❌ Элемент не найден!');
