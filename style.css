@@ -29,36 +29,61 @@ body.dark {
   --TimerColor-4: #AED581; /* 30 - 20 секунд */
   --TimerColor-5: #388E3C; /* постоянно если есть условие */
 }
-.Clock-Container {
-    color: var(--TimerColor-5)
-    /* transition: color 0.3s ease; */
+
+body .Clock-Container.timer-color-1,
+body .Clock-Container.timer-color-1 #cloc-ms {
+    color: #D32F2F !important
 }
 
-.timer-color-1 {color: var(--TimerColor-1) !important;}
-.timer-color-2 {color: var(--TimerColor-2) !important;}
-.timer-color-3 {color: var(--TimerColor-3) !important;}
-.timer-color-4 {color: var(--TimerColor-4) !important;}
-.timer-color-5 {color: var(--TimerColor-5) !important;}
+body .Clock-Container.timer-color-2,
+body .Clock-Container.timer-color-2 #cloc-ms {
+    color: #F57C00 !important
+}
 
+body .Clock-Container.timer-color-3,
+body .Clock-Container.timer-color-3 #cloc-ms {
+    color: #ffb300 !important
+}
+
+body .Clock-Container.timer-color-4,
+body .Clock-Container.timer-color-4 #cloc-ms {
+    color: #AED581 !important
+}
+
+body .Clock-Container.timer-color-5,
+body .Clock-Container.timer-color-5 #cloc-ms {
+    color: #388E3C !important
+}
+
+
+/* обычный */
 @font-face {
   font-style: normal;
   font-display: swap;
   font-weight: normal;
-  font-family: 'NewFonts';
-  src: url('./fonts/Rodchenko reg.otf') format('opentype');
+  font-family: 'Rodchenko';
+  src: url('fonts/Rodchenko/Rodchenko.woff2') format('woff2');
+}
+/* Жирный */
+@font-face{
+  font-style: normal;
+  font-display: swap;
+  font-weight: normal;
+  font-family: 'Rodchenko';
+  src: url('fonts/Rodchenko/Rodchenko\ Bold.woff2') format('woff2');
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Rodchenko', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
     margin: 0;
     /* шрифт */
-    font-family: 'NewFonts', sans-serif;
+    font-family: 'Rodchenko', sans-serif;
 
     /* делаем flex контейнер */
     display: flex;
@@ -258,10 +283,14 @@ main{
 }
 .Clock-Container{
     font-size: 5rem;
-    font-weight: bold;
-    color: var(--text);
+    /* color: var(--text); */
+    color: #388E3C !important
 }
-.Data-Container{
+
+#cloc-ms {
+    color: inherit !important
+}
+.DataContainer{
     font-size: 2rem;
     font-weight: 100;
     color: var(--text);

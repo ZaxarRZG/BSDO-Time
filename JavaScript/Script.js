@@ -48,7 +48,7 @@ function startMoscowClock() {
     
     var clockContainer = clockElement.parentElement;
     if (clockContainer) {
-        clockContainer.className = 'Clock-Container timer-color-5';
+        clockContainer.className = 'Clock-Container';
     }
 }
 
@@ -77,17 +77,30 @@ function updateTimerColor(seconds) {
     var clockContainer = clockElement.parentElement;
     if (!clockContainer) return;
     
-    clockContainer.classList.remove('timer-color-1', 'timer-color-2', 'timer-color-3', 'timer-color-4', 'timer-color-5');
+
+    clockContainer.classList.remove(
+        'timer-color-1', 
+        'timer-color-2', 
+        'timer-color-3', 
+        'timer-color-4', 
+        'timer-color-5'
+    );
     
     if (seconds <= 5) {
         clockContainer.classList.add('timer-color-1');
-    } else if (seconds <= 9) {
+    } 
+    else if (seconds <= 9) {
         clockContainer.classList.add('timer-color-2');
-    } else if (seconds <= 19) {
+    } 
+    else if (seconds <= 19) {
         clockContainer.classList.add('timer-color-3');
-    } else if (seconds <= 30) {
+    } 
+    else if (seconds <= 30) {
+
         clockContainer.classList.add('timer-color-4');
-    } else {
+    } 
+    else {
+
         clockContainer.classList.add('timer-color-5');
     }
 }
@@ -163,7 +176,7 @@ function startCountdown(totalSeconds) {
     clockElement.textContent = formatted.time;
     clockMsElement.textContent = formatted.ms;
     updateTimerColor(totalSeconds);
-    dateElement.textContent = '⏳ Обратный отсчёт';
+    dateElement.textContent = 'Обратный отсчёт';
     
     function updateTimer() {
         var elapsed = Date.now() - countdownStartTime;
