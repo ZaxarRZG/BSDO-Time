@@ -158,11 +158,13 @@ body {
 #ModalContent{
     width: 90%;
     padding: 30px;
-    max-width: 500px;
+    overflow: auto;
+    max-width: 1000px;
     color: var(--text);
     position: relative;
     border-radius: 12px;
     background: var(--bg);
+    box-sizing: border-box;
     transform: translateY(-20px);
     transition: transform 0.3s ease;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -193,9 +195,9 @@ body {
 /* кнопки теста */
 .Test{
     display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100px;
+    align-items: center;
+    justify-content: center;
 
 }
 .Test10s{
@@ -260,12 +262,12 @@ body {
 #TbeGitData{
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-right: 10px;
 }
 
 .TbeGit th, .TbeGit td{
     padding: 12px 15px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid var(--border-color);
 }
 
