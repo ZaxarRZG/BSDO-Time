@@ -32,27 +32,32 @@ body.dark {
 
 body .Clock-Container.timer-color-1,
 body .Clock-Container.timer-color-1 #cloc-ms {
-    color: #D32F2F !important
+    color: #D32F2F !important;
+    text-shadow: 0 0 20px rgba(211, 47, 47, 0.7);
 }
 
 body .Clock-Container.timer-color-2,
 body .Clock-Container.timer-color-2 #cloc-ms {
-    color: #F57C00 !important
+    color: #F57C00 !important;
+    text-shadow: 0 0 20px rgba(245, 124, 0, 0.7);
 }
 
 body .Clock-Container.timer-color-3,
 body .Clock-Container.timer-color-3 #cloc-ms {
-    color: #ffb300 !important
+    color: #ffb300 !important;
+    text-shadow: 0 0 20px rgba(255, 179, 0, 0.7);
 }
 
 body .Clock-Container.timer-color-4,
 body .Clock-Container.timer-color-4 #cloc-ms {
-    color: #AED581 !important
+    color: #AED581 !important;
+    text-shadow: 0 0 20px rgba(174, 213, 129, 0.7);
 }
 
 body .Clock-Container.timer-color-5,
 body .Clock-Container.timer-color-5 #cloc-ms {
-    color: #388E3C !important
+    color: #388E3C !important;
+    text-shadow: 0 0 20px rgba(56, 142, 60, 0.7);
 }
 
 
@@ -137,7 +142,6 @@ body {
     height: 100%;
     z-index: 1000;
     position: fixed;
-    background-color: var(--bg);
 
     opacity: 0;
     visibility: hidden;
@@ -149,7 +153,7 @@ body {
     transition: all 0.3s ease;
 
     backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    /* -webkit-backdrop-filter: blur(5px); */
 }
 #ModalOverlay.active{
     opacity: 1;
@@ -204,7 +208,7 @@ body {
     /* размеры */
     font-size: 18px;
     line-height: 1.2;
-    padding: 14px 36px;
+    padding: 5px 25px;
     text-align: center;
     box-sizing: border-box;
 
@@ -219,7 +223,7 @@ body {
     /* размеры */
     font-size: 18px;
     line-height: 1.2;
-    padding: 14px 36px;
+    padding: 5px 25px;
     text-align: center;
     box-sizing: border-box;
 
@@ -234,7 +238,7 @@ body {
     /* размеры */
     font-size: 18px;
     line-height: 1.2;
-    padding: 14px 36px;
+    padding: 5px 25px;
     text-align: center;
     box-sizing: border-box;
 
@@ -262,7 +266,6 @@ body {
 #TbeGitData{
     width: 100%;
     border-collapse: collapse;
-    margin-right: 10px;
 }
 
 .TbeGit th, .TbeGit td{
@@ -277,25 +280,38 @@ body {
     color: var(--text);
 }
 
+.InputP{
+    margin-right: auto;
+    font-size: 17px;
+    text-align: left;
+}
+
+.TimeInput{
+    margin-left: 33px;
+}
+.CheckboxRepeat{
+    margin-left: 40px;
+}
+
 /* часы - таймер */
 main{
     flex: 1;
     padding: 20px;
     text-align: center;
+    color: var(--text);
 }
 .Clock-Container{
     font-size: 5rem;
-    /* color: var(--text); */
-    color: #388E3C !important
+    color: #388E3C !important;
+    text-shadow: 0 0 20px rgba(56, 142, 60, 0.7);
 }
 
 #cloc-ms {
-    color: inherit !important
+    color: inherit !important;
 }
 .DataContainer{
     font-size: 2rem;
     font-weight: 100;
-    color: var(--text);
 }
 
 /* футер */

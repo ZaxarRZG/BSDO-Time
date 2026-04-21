@@ -23,7 +23,10 @@ function initElements() {
 
 function updateMoscowTime() {
     var now = new Date();
-    var moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
+    
+    var utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    
+    var moscowTime = new Date(utc + (3600000 * 3));
     
     var hours = String(moscowTime.getHours()).padStart(2, '0');
     var minutes = String(moscowTime.getMinutes()).padStart(2, '0');
@@ -37,6 +40,8 @@ function updateMoscowTime() {
     clockElement.textContent = hours + ':' + minutes + ':' + seconds;
     clockMsElement.textContent = ':' + ms;
     dateElement.textContent = day + '.' + month + '.' + year;
+    
+    // console.log('МС:', ms);
 }
 
 function startMoscowClock() {
@@ -155,7 +160,7 @@ function exitFullscreen() {
     }
 }
 
-// ===== ТАЙМЕР С МИЛЛИСЕКУНДАМИ =====
+
 function startCountdown(totalSeconds) {
     if (countdownInterval) clearInterval(countdownInterval);
     if (moscowInterval) clearInterval(moscowInterval);
@@ -202,6 +207,7 @@ function startCountdown(totalSeconds) {
     countdownInterval = setInterval(updateTimer, 10);
 }
 
+
 function resetTimerUI() {
     startMoscowClock();
 }
@@ -243,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btn10s) {
         btn10s.addEventListener('click', function() {
             if (!isTimerRunning && confirm('Запустить тест на 10 секунд?')) {
+                                closeModal();
                 startCountdown(10);
             }
         });
@@ -253,6 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btn1min) {
         btn1min.addEventListener('click', function() {
             if (!isTimerRunning && confirm('Запустить тест на 1 минуту?')) {
+                                closeModal();
                 startCountdown(60);
             }
         });
@@ -263,6 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (btn10min) {
         btn10min.addEventListener('click', function() {
             if (!isTimerRunning && confirm('Запустить тест на 10 минут?')) {
+                                closeModal();
                 startCountdown(600);
             }
         });
@@ -277,3 +286,11 @@ document.addEventListener('keydown', function(e) {
         window.resetTimer();
     }
 });
+
+function closeModal() {
+    var modal = document.getElementById('ModalOverlay');
+    if (modal) {
+        modal.classList.remove('active');
+
+    }
+}

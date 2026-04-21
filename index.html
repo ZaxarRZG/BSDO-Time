@@ -43,19 +43,24 @@
             <button class="Test10min" id="test-10min"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-flask"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M15 2a1 1 0 0 1 0 2v4.826l3.932 10.814l.034 .077a1.7 1.7 0 0 1 -.002 1.193l-.07 .162a1.7 1.7 0 0 1 -1.213 .911l-.181 .017h-11l-.181 -.017a1.7 1.7 0 0 1 -1.285 -2.266l.039 -.09l3.927 -10.804v-4.823a1 1 0 1 1 0 -2h6zm-2 2h-2v4h2v-4z" /></svg>тест на 10 минут</button>
           </div>
           <div id="Input">
+            <!-- Name input -->
+            <div>
+              <p class="InputP"><a>Имя </a><input type="text"></p>
+            </div>
             <!-- Time input -->
             <div>
-              <p><a>Время</a><input type="time" id="TimeInput" name="time"></p>
+              <p class="InputP"><a>Время</a><input type="time" class="TimeInput" name="time"></p>
             </div>
             <!-- Data input -->
             <div>
-              <p><a>Дата </a><input type="date" id="DataInput" name="data"></p>
+              <p class="InputP"><a>Дата </a><input type="date" class="DataInput" name="data"><a> без даты </a><input type="checkbox" class="DataCheck"></p>
             </div>
             <!-- repeat input -->
             <div>
-              <p><a>повтор</a><input type="checkbox" id="CheckboxRepeat" name="repeat"></p>
+              <p class="InputP"><a>повтор</a><input type="checkbox" class="CheckboxRepeat" name="repeat"></p>
             </div>
-            <button class="Btn" id="AddTimeBtn">Добавить в базу</button>
+            <button class="Btn" id="AddTimeBtn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-plus-icon lucide-package-plus"><path d="M12 22V12"/><path d="M16 17h6"/><path d="M19 14v6"/><path d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"/><path d="M3.29 7 12 12l8.71-5"/><path d="m7.5 4.27 8.997 5.148"/></svg>Добавить в базу</button>
+            <button class='Btn'><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-ccw-icon lucide-refresh-ccw"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>обновить</button>
             <!-- Таблица данных с GitHub -->
             <table class="TbeGit" id="TbeGitGists">
               <thead id="TbeHead">
@@ -96,6 +101,8 @@
     <script src="JavaScript/Theme.js" defer></script>
   <!-- модальное окно -->
     <script src="JavaScript/Modal.js" defer></script>
+  <!-- GitHu API  -->
+    <script src="JavaScript/GithubAPI.js" defer></script>
   <!-- автоматическая смена года -->    
     <script defer> 
       document.getElementById('CurrentYear').textContent = new Date().getFullYear();
