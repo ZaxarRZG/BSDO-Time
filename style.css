@@ -275,15 +275,15 @@ body {
 }
 
 #TbeGitData th{
-    background-color: var(--bg);
     font-weight: 600;
     color: var(--text);
+    background-color: var(--bg);
 }
 
 .InputP{
-    margin-right: auto;
     font-size: 17px;
     text-align: left;
+    margin-right: auto;
 }
 
 .TimeInput{

@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Модальное окно с переключателем тем</title>
+  <style>
+    /* ===== CSS Variables для тем ===== */
+    :root {
+      /* Светлая тема (по умолчанию) */
+      --bg-overlay: rgba(0, 0, 0, 0.5);
+      --bg-modal: #ffffff;
+      --bg-modal-border: transparent;
+      --bg-modal-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --border-hover: #cbd5e1;
+      --input-bg: #f8fafc;
+      --input-bg-focus: #ffffff;
+      --btn-primary-bg: linear-gradient(135deg, #3b82f6, #2563eb);
+      --btn-primary-hover: linear-gradient(135deg, #2563eb, #1d4ed8);
+      --btn-primary-shadow: rgba(59, 130, 246, 0.3);
+      --btn-secondary-bg: linear-gradient(135deg, #64748b, #475569);
+      --btn-secondary-hover: linear-gradient(135deg, #475569, #334155);
+      --btn-secondary-shadow: rgba(100, 116, 139, 0.25);
+      --test-btn-bg: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      --test-btn-border: #cbd5e1;
+      --test-btn-hover-bg: linear-gradient(135deg, #e0f2fe, #bae6fd);
+      --test-btn-hover-border: #38bdf8;
+      --test-btn-hover-color: #0284c7;
+      --table-header-bg: linear-gradient(135deg, #1e293b, #334155);
+      --table-header-text: #ffffff;
+      --table-row-bg: #ffffff;
+      --table-row-hover: #f8fafc;
+      --table-text: #334155;
+      --close-btn-bg: #f1f5f9;
+      --close-btn-hover-bg: #e2e8f0;
+      --close-btn-hover-color: #ef4444;
+      --accent-color: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.1);
+      --scrollbar-thumb: #cbd5e1;
+      --scrollbar-thumb-hover: #94a3b8;
+      --backdrop-blur: none;
+      --modal-border-inset: none;
+    }
+
+    /* Тёмная тема */
+    [data-theme="dark"] {
+        --bg-modal: #1e293b;
+        --input-bg: #334155;
+        --text-muted: #94a3b8;
+        --table-text: #e2e8f0;
+        --table-row-bg: #1e293b;
+        --close-btn-bg: #334155;
+        --border-color: #475569;
+        --border-hover: #64748b;
+        --text-primary: #f1f5f9;
+        --accent-color: #60a5fa;
+        --input-bg-focus: #475569;
+        --text-secondary: #cbd5e1;
+        --bg-modal-border: #334155;
+        --table-row-hover: #334155;
+        --scrollbar-thumb: #475569;
+        --test-btn-border: #64748b;
+        --table-header-text: #f1f5f9;
+        --close-btn-hover-bg: #475569;
+        --test-btn-hover-color: #93c5fd;
+        --scrollbar-thumb-hover: #64748b;
+        --close-btn-hover-color: #f87171;
+        --test-btn-hover-border: #60a5fa;
+        --bg-overlay: rgba(0, 0, 0, 0.7);
+        --accent-glow: rgba(96, 165, 250, 0.2);
+        --btn-primary-shadow: rgba(59, 130, 246, 0.4);
+        --btn-secondary-shadow: rgba(100, 116, 139, 0.35);
+        --bg-modal-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        --test-btn-bg: linear-gradient(135deg, #334155, #475569);
+        --btn-primary-bg: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        --table-header-bg: linear-gradient(135deg, #0f172a, #1e293b);
+        --btn-secondary-bg: linear-gradient(135deg, #475569, #334155);
+        --test-btn-hover-bg: linear-gradient(135deg, #0f172a, #1e293b);
+        --btn-primary-hover: linear-gradient(135deg, #2563eb, #1d4ed8);
+        --btn-secondary-hover: linear-gradient(135deg, #334155, #1e293b);
+    }
+
+    /* Глассморфизм */
+    [data-theme="glass"] {
+      --bg-modal: rgba(255, 255, 255, 0.85);
+      --bg-modal-border: rgba(255, 255, 255, 0.3);
+      --bg-modal-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+      --backdrop-blur: blur(20px);
+      --modal-border-inset: 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+      --test-btn-bg: rgba(248, 250, 252, 0.7);
+      --test-btn-border: rgba(203, 213, 225, 0.5);
+      --btn-primary-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(37, 99, 235, 0.9));
+      --btn-primary-shadow: 
+        0 4px 14px rgba(59, 130, 246, 0.4),
+        0 0 20px rgba(59, 130, 246, 0.15);
+    }
+
+    [data-theme="glass"][data-theme="dark"] {
+      --bg-modal: rgba(30, 41, 59, 0.85);
+      --bg-modal-border: rgba(255, 255, 255, 0.1);
+      --bg-modal-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    }
+
+    /* ===== Базовые стили страницы ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: var(--text-primary);
+      transition: background 0.3s;
+    }
+
+    /* Кнопка открытия модалки */
+    .open-modal-btn {
+      padding: 16px 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: white;
+      color: #667eea;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s;
+    }
+
+    .open-modal-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ===== Переключатель тем ===== */
+    .theme-switcher {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 2000;
+      backdrop-filter: blur(10px);
+    }
+
+    [data-theme="dark"] .theme-switcher {
+      background: rgba(30, 41, 59, 0.95);
+      border: 1px solid #334155;
+    }
+
+    .theme-btn {
+      padding: 10px 16px;
+      border: 2px solid var(--border-color);
+      background: var(--input-bg);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent-color);
+      color: var(--accent-color);
+    }
+
+    .theme-btn.active {
+      background: var(--accent-color);
+      border-color: var(--accent-color);
+      color: white;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* ===== Модальное окно ===== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-overlay);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: var(--backdrop-blur);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    #ModalContent {
+      background: var(--bg-modal);
+      border: 1px solid var(--bg-modal-border);
+      border-radius: 16px;
+      padding: 24px;
+      width: 90%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--bg-modal-shadow);
+      box-shadow: var(--modal-border-inset), var(--bg-modal-shadow);
+      position: relative;
+      animation: slideUp 0.4s ease;
+      scroll-behavior: smooth;
+    }
+
+    /* Скроллбар */
+    #ModalContent::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #ModalContent::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #ModalContent::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 3px;
+    }
+
+    #ModalContent::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover);
+    }
+
+    /* Кнопка закрытия */
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--close-btn-bg);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: var(--close-btn-hover-bg);
+      color: var(--close-btn-hover-color);
+      transform: rotate(90deg);
+    }
+
+    /* Заголовок */
+    #TimeSet {
+      margin: 0 0 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border-color);
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    /* Кнопки тестов */
+    .Test {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .Test button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 8px;
+      background: var(--test-btn-bg);
+      border: 2px solid var(--test-btn-border);
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.25s;
+    }
+
+    .Test button svg {
+      width: 24px;
+      height: 24px;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+
+    .Test button:hover {
+      background: var(--test-btn-hover-bg);
+      border-color: var(--test-btn-hover-border);
+      color: var(--test-btn-hover-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    .Test button:hover svg {
+      color: var(--test-btn-hover-color);
+    }
+
+    .Test button:active {
+      transform: translateY(0);
+    }
+
+    /* Поля ввода */
+    #Input {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .InputP {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .InputP > label {
+      min-width: 70px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .InputP input[type="text"],
+    .InputP input[type="time"],
+    .InputP input[type="date"] {
+        flex: 1;
+        font-size: 1rem;
+      padding: 10px 14px;
+      border-radius: 8px;
+      transition: all 0.2s;
+      color: var(--text-primary);
+      background: var(--input-bg);
+      border: 2px solid var(--border-color);
+    }
+
+     .InputP input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      background: var(--input-bg-focus);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    } 
+
+    .InputP:has(input:focus) > label {
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+
+    .InputP input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-color);
+      cursor: pointer;
+    }
+
+    .InputP a {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-left: 8px;
+      cursor: pointer;
+    }
+
+    .InputP a:hover {
+      color: var(--accent-color);
+    }
+
+    /* Кнопки действий */
+    #Input > .Btn {
+        gap: 8px;
+        border: none;
+        display: flex;
+        color: #000;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 12px 20px;
+        align-items: center;
+        border-radius: 10px;
+        transition: all 0.25s;
+        justify-content: center;
+    }
+
+    #Input > .Btn:first-child {
+      background: var(--btn-primary-bg);
+      box-shadow: 0 4px 14px var(--btn-primary-shadow);
+    }
+
+    #Input > .Btn:first-child:hover {
+      background: var(--btn-primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--btn-primary-shadow);
+    }
+
+    #Input > .Btn:last-child {
+      background: var(--btn-secondary-bg);
+      box-shadow: 0 4px 14px var(--btn-secondary-shadow);
+    }
+
+    #Input > .Btn:last-child:hover {
+      background: var(--btn-secondary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--btn-secondary-shadow);
+    }
+
+    #Input > .Btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Таблица */
+    .TbeGit {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-top: 10px;
+      background: var(--table-row-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .TbeGit th {
+      background: var(--table-header-bg);
+      color: var(--table-header-text);
+      padding: 12px 8px;
+      font-weight: 600;
+      text-align: center;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .TbeGit td {
+      padding: 10px 8px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--table-text);
+    }
+
+    .TbeGit tr {
+      animation: fadeInRow 0.3s ease forwards;
+      opacity: 0;
+    }
+
+    .TbeGit tr:nth-child(1) { animation-delay: 0.05s; }
+    .TbeGit tr:nth-child(2) { animation-delay: 0.1s; }
+    .TbeGit tr:nth-child(3) { animation-delay: 0.15s; }
+    .TbeGit tr:nth-child(4) { animation-delay: 0.2s; }
+    .TbeGit tr:nth-child(5) { animation-delay: 0.25s; }
+
+    .TbeGit tr:hover {
+      background: var(--table-row-hover);
+    }
+
+    .TbeGit tr:last-child td {
+      border-bottom: none;
+    }
+
+    #GitGists td[colspan] {
+      padding: 20px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Кнопки в таблице */
+    .table-btn {
+      padding: 6px 12px;
+      margin: 2px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--test-btn-bg);
+      color: var(--text-secondary);
+    }
+
+    .table-btn:hover {
+      background: var(--accent-color);
+      color: white;
+    }
+
+    .table-btn.delete {
+      background: #fecaca;
+      color: #dc2626;
+    }
+
+    .table-btn.delete:hover {
+      background: #ef4444;
+      color: white;
+    }
+
+    /* ===== Анимации ===== */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes fadeInRow {
+      to { opacity: 1; }
+    }
+
+    /* ===== Адаптив ===== */
+    @media (max-width: 600px) {
+      .Test {
+        grid-template-columns: 1fr;
+      }
+      
+      .InputP {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      
+      .InputP > label {
+        min-width: auto;
+      }
+      
+      #ModalContent {
+        padding: 20px 16px;
+        width: 95%;
+      }
+
+      .theme-switcher {
+        flex-wrap: wrap;
+        justify-content: center;
+        top: auto;
+        bottom: 20px;
+        right: 50%;
+        transform: translateX(50%);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .TbeGit {
+        font-size: 0.8rem;
+      }
+      
+      .TbeGit th,
+      .TbeGit td {
+        padding: 8px 4px;
+      }
+      
+      #NumberTH, #BtnTH {
+        display: none;
+      }
+    }
+
+    /* Уведомление */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--bg-modal);
+      color: var(--text-primary);
+      padding: 12px 24px;
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      font-weight: 500;
+      z-index: 3000;
+      transition: transform 0.3s ease;
+      border: 1px solid var(--border-color);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Переключатель тем -->
+  <div class="theme-switcher">
+    <button class="theme-btn active" data-theme-value="light">☀️ Светлая</button>
+    <button class="theme-btn" data-theme-value="dark">🌙 Тёмная</button>
+    <button class="theme-btn" data-theme-value="glass">✨ Стекло</button>
+  </div>
+
+  <!-- Кнопка открытия модалки -->
+  <button class="open-modal-btn" id="openModal">🔔 Открыть модальное окно</button>
+
+  <!-- Модальное окно -->
+  <div class="modal-overlay" id="ModalOverlay">
+    <div id="ModalContent">
+      <button class="close-btn" id="closeBtn" aria-label="Закрыть">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M6.707 5.293l5.293 5.292l5.293 -5.292a1 1 0 0 1 1.414 1.414l-5.292 5.293l5.292 5.293a1 1 0 0 1 -1.414 1.414l-5.293 -5.292l-5.293 5.292a1 1 0 1 1 -1.414 -1.414l5.292 -5.293l-5.292 -5.293a1 1 0 0 1 1.414 -1.414" />
+        </svg>
+      </button>
+      
+      <h2 id="TimeSet">⏱️ Установка таймера</h2>
+      
+      <!-- Кнопки теста -->
+      <div class="Test">
+        <button class="Test10s" id="test-10s">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M16 2a1 1 0 0 1 0 2v14a4 4 0 1 1 -8 0v-14a1 1 0 1 1 0 -2zm-2 2h-4v7h4z" />
+          </svg>
+          10 сек
+        </button>
+        <button class="Test1min" id="test-1min">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M15 2a1 1 0 0 1 0 2v5.674l.062 .03a7 7 0 0 1 3.85 5.174l.037 .262a7 7 0 0 1 -3.078 6.693a1 1 0 0 1 -.553 .167h-6.635a1 1 0 0 1 -.552 -.166a7 7 0 0 1 .807 -12.134l.062 -.028v-5.672a1 1 0 1 1 0 -2h6zm-2 2h-2v6.34a1 1 0 0 1 -.551 .894l-.116 .049a5 5 0 0 0 -2.92 2.717h9.172a5 5 0 0 0 -2.918 -2.715a1 1 0 0 1 -.667 -.943v-6.342z" />
+          </svg>
+          1 мин
+        </button>
+        <button class="Test10min" id="test-10min">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M15 2a1 1 0 0 1 0 2v4.826l3.932 10.814l.034 .077a1.7 1.7 0 0 1 -.002 1.193l-.07 .162a1.7 1.7 0 0 1 -1.213 .911l-.181 .017h-11l-.181 -.017a1.7 1.7 0 0 1 -1.285 -2.266l.039 -.09l3.927 -10.804v-4.823a1 1 0 1 1 0 -2h6zm-2 2h-2v4h2v-4z" />
+          </svg>
+          10 мин
+        </button>
+      </div>
+      
+      <div id="Input">
+        <!-- Name input -->
+        <div>
+          <p class="InputP">
+            <label>Имя</label>
+            <input type="text" id="nameInput" placeholder="Введите имя...">
+          </p>
+        </div>
+        
+        <!-- Time input -->
+        <div>
+          <p class="InputP">
+            <label>Время</label>
+            <input type="time" class="TimeInput" id="timeInput">
+          </p>
+        </div>
+        
+        <!-- Date input -->
+        <div>
+          <p class="InputP">
+            <label>Дата</label>
+            <input type="date" class="DataInput" id="dateInput">
+            <label style="min-width:auto;"><input type="checkbox" class="DataCheck" id="noDate"> без даты</label>
+          </p>
+        </div>
+        
+        <!-- Repeat input -->
+        <div>
+          <p class="InputP">
+            <label>Повтор</label>
+            <input type="checkbox" class="CheckboxRepeat" id="repeatCheck">
+          </p>
+        </div>
+        
+        <button class="Btn" id="AddTimeBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22V12"/><path d="M16 17h6"/><path d="M19 14v6"/>
+            <path d="M21 10.535V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.675-.955"/>
+            <path d="M3.29 7 12 12l8.71-5"/><path d="m7.5 4.27 8.997 5.148"/>
+          </svg>
+          Добавить в базу
+        </button>
+        
+        <button class='Btn' id="refreshBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
+          </svg>
+          Обновить
+        </button>
+        
+        <!-- Таблица данных -->
+        <table class="TbeGit" id="TbeGitGists">
+          <thead id="TbeHead">
+            <tr>
+              <th id="NumberTH">№</th>
+              <th id="NameTH">Имя</th>
+              <th id="TimeTH">Время</th>
+              <th id="DataTH">Дата</th>
+              <th id="BtnTH">Действия</th>
+            </tr>
+          </thead>
+          <tbody id="GitGists">
+            <!-- Демо-данные -->
+            <tr>
+              <td>1</td>
+              <td>Алексей</td>
+              <td>10:00</td>
+              <td>28.04.2026</td>
+              <td>
+                <button class="table-btn">✏️</button>
+                <button class="table-btn delete">🗑️</button>
+              </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Мария</td>
+              <td>14:30</td>
+              <td>29.04.2026</td>
+              <td>
+                <button class="table-btn">✏️</button>
+                <button class="table-btn delete">🗑️</button>
+              </td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Дмитрий</td>
+              <td>09:15</td>
+              <td>—</td>
+              <td>
+                <button class="table-btn">✏️</button>
+                <button class="table-btn delete">🗑️</button>
+              </td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Елена</td>
+              <td>18:00</td>
+              <td>30.04.2026</td>
+              <td>
+                <button class="table-btn">✏️</button>
+                <button class="table-btn delete">🗑️</button>
+              </td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Иван</td>
+              <td>12:45</td>
+              <td>01.05.2026</td>
+              <td>
+                <button class="table-btn">✏️</button>
+                <button class="table-btn delete">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Уведомление -->
+  <div class="toast" id="toast">Тема изменена!</div>
+
+  <script>
+    // ===== Переключатель тем =====
+    const themeBtns = document.querySelectorAll('.theme-btn');
+    const root = document.documentElement;
+    const toast = document.getElementById('toast');
+
+    // Загрузка сохранённой темы
+    const savedTheme = localStorage.getItem('modalTheme') || 'light';
+    applyTheme(savedTheme);
+
+    themeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const theme = btn.dataset.themeValue;
+        applyTheme(theme);
+        localStorage.setItem('modalTheme', theme);
+        showToast(`Тема: ${btn.textContent.trim()}`);
+      });
+    });
+
+    function applyTheme(theme) {
+      // Убираем все темы
+      root.removeAttribute('data-theme');
+      
+      // Применяем выбранную
+      if (theme !== 'light') {
+        root.setAttribute('data-theme', theme);
+      }
+      
+      // Обновляем активную кнопку
+      themeBtns.forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-theme-value="${theme}"]`)?.classList.add('active');
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // ===== Модальное окно =====
+    const modal = document.getElementById('ModalOverlay');
+    const openBtn = document.getElementById('openModal');
+    const closeBtn = document.getElementById('closeBtn');
+
+    openBtn.addEventListener('click', () => {
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden'; // Блокируем скролл фона
+    });
+
+    function closeModal() {
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+
+    // Закрытие по клику вне контента
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Закрытие по Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('show')) {
+        closeModal();
+      }
+    });
+
+    // ===== Обработчики кнопок теста =====
+    document.querySelectorAll('.Test button').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const time = this.id.replace('test-', '');
+        document.getElementById('timeInput').value = 
+          time === '10s' ? '00:10' : 
+          time === '1min' ? '00:01' : '10:00';
+        showToast(`⏱ Выбрано: ${this.textContent.trim()}`);
+      });
+    });
+
+    // ===== Чекбокс "без даты" =====
+    document.getElementById('noDate').addEventListener('change', function(e) {
+      document.getElementById('dateInput').disabled = e.target.checked;
+      if (e.target.checked) {
+        document.getElementById('dateInput').value = '';
+      }
+    });
+
+    // ===== Кнопка "Добавить" =====
+    document.getElementById('AddTimeBtn').addEventListener('click', function() {
+      const name = document.getElementById('nameInput').value.trim();
+      const time = document.getElementById('timeInput').value;
+      const date = document.getElementById('dateInput').value;
+      const noDate = document.getElementById('noDate').checked;
+      
+      if (!name || !time) {
+        showToast('⚠️ Заполните имя и время!');
+        return;
+      }
+      
+      const tbody = document.getElementById('GitGists');
+      const rowCount = tbody.rows.length + 1;
+      const dateDisplay = noDate ? '—' : formatDate(date);
+      
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td>${rowCount}</td>
+        <td>${escapeHtml(name)}</td>
+        <td>${time}</td>
+        <td>${dateDisplay}</td>
+        <td>
+          <button class="table-btn">✏️</button>
+          <button class="table-btn delete">🗑️</button>
+        </td>
+      `;
+      
+      // Анимация появления
+      newRow.style.opacity = '0';
+      newRow.style.animation = 'fadeInRow 0.3s ease forwards';
+      tbody.insertBefore(newRow, tbody.firstChild);
+      
+      // Добавляем обработчики для новых кнопок
+      newRow.querySelector('.delete').addEventListener('click', function() {
+        newRow.style.opacity = '0';
+        setTimeout(() => newRow.remove(), 200);
+        showToast('🗑️ Удалено');
+        updateRowNumbers();
+      });
+      
+      newRow.querySelector('.table-btn:not(.delete)').addEventListener('click', function() {
+        showToast('✏️ Редактирование...');
+      });
+      
+      // Очистка полей
+      document.getElementById('nameInput').value = '';
+      showToast('✅ Добавлено в базу!');
+    });
+
+    // ===== Кнопка "Обновить" =====
+    document.getElementById('refreshBtn').addEventListener('click', function() {
+      const tbody = document.getElementById('GitGists');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Загрузка...</td></tr>';
+      
+      setTimeout(() => {
+        // Имитация загрузки
+        tbody.innerHTML = `
+          <tr><td>1</td><td>Алексей</td><td>10:00</td><td>28.04.2026</td><td><button class="table-btn">✏️</button><button class="table-btn delete">🗑️</button></td></tr>
+          <tr><td>2</td><td>Мария</td><td>14:30</td><td>29.04.2026</td><td><button class="table-btn">✏️</button><button class="table-btn delete">🗑️</button></td></tr>
+          <tr><td>3</td><td>Дмитрий</td><td>09:15</td><td>—</td><td><button class="table-btn">✏️</button><button class="table-btn delete">🗑️</button></td></tr>
+        `;
+        attachTableBtnHandlers();
+        showToast('🔄 Данные обновлены!');
+      }, 800);
+    });
+
+    // ===== Вспомогательные функции =====
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      const [y, m, d] = dateStr.split('-');
+      return `${d}.${m}.${y}`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function updateRowNumbers() {
+      document.querySelectorAll('#GitGists tr').forEach((row, i) => {
+        row.cells[0].textContent = i + 1;
+      });
+    }
+
+    function attachTableBtnHandlers() {
+      document.querySelectorAll('.table-btn.delete').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const row = this.closest('tr');
+          row.style.opacity = '0';
+          setTimeout(() => row.remove(), 200);
+          showToast('🗑️ Удалено');
+          updateRowNumbers();
+        });
+      });
+      
+      document.querySelectorAll('.table-btn:not(.delete)').forEach(btn => {
+        btn.addEventListener('click', () => showToast('✏️ Редактирование...'));
+      });
+    }
+
+    // Инициализация обработчиков для демо-данных
+    attachTableBtnHandlers();
+  </script>
+</body>
+</html>

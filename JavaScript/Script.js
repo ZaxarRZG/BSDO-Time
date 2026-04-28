@@ -294,3 +294,89 @@ function closeModal() {
 
     }
 }
+
+//g
+
+function toggleFullscreenBind() {
+    var elem = document.documentElement;
+    
+    var isFullscreen = document.fullscreenElement || 
+                       document.webkitFullscreenElement || 
+                       document.mozFullScreenElement || 
+                       document.msFullscreenElement;
+    
+    if (!isFullscreen) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen().catch(function() {});
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
+        console.log('Fullscreen: ВКЛ (клавиша I)')
+    }
+}
+
+function simulateKeyPress(key) {
+    var event = new KeyboardEvent('keydown', {
+        key: key,
+        code: 'Key' + key.toUpperCase(),
+        keyCode: key.toUpperCase().charCodeAt(0),
+        which: key.toUpperCase().charCodeAt(0),
+        bubbles: true,
+        cancelable: true
+    });
+    
+    document.dispatchEvent(event);
+    console.log('Имитация нажатия клавиши:', key);
+}
+
+document.addEventListener('keydown', function(e) {
+
+    if (e.key.toLowerCase() === 'i') {
+
+        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            toggleFullscreenBind();
+        }
+    }
+    
+    if (e.key === 'Escape') {
+        var bsodOverlay = document.getElementById('bsod-overlay');
+        if (bsodOverlay && !bsodOverlay.classList.contains('hidden')) {
+            exitFullscreen();
+            window.resetTimer();
+        }
+    }
+});
+
+function showBSOD() {
+    var bsodOverlay = document.getElementById('bsod-overlay');
+    var bsodImage = document.getElementById('bsod-image');
+    
+    if (!bsodOverlay) {
+        bsodOverlay = document.createElement('div');
+        bsodOverlay.id = 'bsod-overlay';
+        bsodOverlay.className = 'hidden';
+        bsodOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0078d7;display:flex;justify-content:center;align-items:center;z-index:9999;margin:0;padding:0;';
+        document.body.appendChild(bsodOverlay);
+    }
+    
+    if (!bsodImage) {
+        bsodImage = document.createElement('img');
+        bsodImage.id = 'bsod-image';
+        bsodImage.style.cssText = 'width:100%;height:100%;object-fit:fill;display:block;';
+        bsodOverlay.appendChild(bsodImage);
+    }
+    
+    bsodImage.src = getBSODPath();
+    bsodOverlay.classList.remove('hidden');
+    bsodOverlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    
+    setTimeout(function() {
+        simulateKeyPress('i');
+    }, 500);
+    
+    enterFullscreen();
+}
