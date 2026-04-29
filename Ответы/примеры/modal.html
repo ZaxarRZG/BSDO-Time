@@ -192,7 +192,7 @@
     }
 
     /* ===== Модальное окно ===== */
-    .modal-overlay {
+    .Modal-Overlay {
       position: fixed;
       top: 0;
       left: 0;
@@ -207,7 +207,7 @@
       animation: fadeIn 0.3s ease;
     }
 
-    .modal-overlay.show {
+    .Modal-Overlay.show {
       display: flex;
     }
 
@@ -620,9 +620,9 @@
   <button class="open-modal-btn" id="openModal">🔔 Открыть модальное окно</button>
 
   <!-- Модальное окно -->
-  <div class="modal-overlay" id="ModalOverlay">
+  <div class="Modal-Overlay" id="ModalOverlay">
     <div id="ModalContent">
-      <button class="close-btn" id="closeBtn" aria-label="Закрыть">
+      <button class="close-btn" id="CloseBtn" aria-label="Закрыть">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
           <path d="M6.707 5.293l5.293 5.292l5.293 -5.292a1 1 0 0 1 1.414 1.414l-5.292 5.293l5.292 5.293a1 1 0 0 1 -1.414 1.414l-5.293 -5.292l-5.293 5.292a1 1 0 1 1 -1.414 -1.414l5.292 -5.293l-5.292 -5.293a1 1 0 0 1 1.414 -1.414" />
@@ -821,7 +821,7 @@
     // ===== Модальное окно =====
     const modal = document.getElementById('ModalOverlay');
     const openBtn = document.getElementById('openModal');
-    const closeBtn = document.getElementById('closeBtn');
+    const CloseBtn = document.getElementById('CloseBtn');
 
     openBtn.addEventListener('click', () => {
       modal.classList.add('show');
@@ -833,7 +833,7 @@
       document.body.style.overflow = '';
     }
 
-    closeBtn.addEventListener('click', closeModal);
+    CloseBtn.addEventListener('click', closeModal);
 
     // Закрытие по клику вне контента
     modal.addEventListener('click', (e) => {

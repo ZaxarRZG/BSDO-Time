@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const openBtn = document.getElementById('BtnTimer');
     const modalOverlay = document.getElementById('ModalOverlay');
-    const closeBtn = document.querySelector('#closeBtn');
+    const CloseBtn = document.querySelector('#CloseBtn');
 
-    if (!openBtn || !modalOverlay || !closeBtn) {
+    if (!openBtn || !modalOverlay || !CloseBtn) {
         console.error('❌ Элемент не найден!');
         return;
     }
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.classList.add('active');
     });
 
-    closeBtn.addEventListener('click', () => {
+    CloseBtn.addEventListener('click', () => {
         modalOverlay.classList.remove('active');
     });
 

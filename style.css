@@ -31,31 +31,31 @@ body.dark {
 }
 
 body .Clock-Container.timer-color-1,
-body .Clock-Container.timer-color-1 #cloc-ms {
+body .Clock-Container.timer-color-1 #ClocMs {
     color: #D32F2F !important;
     text-shadow: 0 0 20px rgba(211, 47, 47, 0.7);
 }
 
 body .Clock-Container.timer-color-2,
-body .Clock-Container.timer-color-2 #cloc-ms {
+body .Clock-Container.timer-color-2 #ClocMs {
     color: #F57C00 !important;
     text-shadow: 0 0 20px rgba(245, 124, 0, 0.7);
 }
 
 body .Clock-Container.timer-color-3,
-body .Clock-Container.timer-color-3 #cloc-ms {
+body .Clock-Container.timer-color-3 #ClocMs {
     color: #ffb300 !important;
     text-shadow: 0 0 20px rgba(255, 179, 0, 0.7);
 }
 
 body .Clock-Container.timer-color-4,
-body .Clock-Container.timer-color-4 #cloc-ms {
+body .Clock-Container.timer-color-4 #ClocMs {
     color: #AED581 !important;
     text-shadow: 0 0 20px rgba(174, 213, 129, 0.7);
 }
 
 body .Clock-Container.timer-color-5,
-body .Clock-Container.timer-color-5 #cloc-ms {
+body .Clock-Container.timer-color-5 #ClocMs {
     color: #388E3C !important;
     text-shadow: 0 0 20px rgba(56, 142, 60, 0.7);
 }
@@ -81,7 +81,7 @@ body .Clock-Container.timer-color-5 #cloc-ms {
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  box-sizing: border-box; margin: 0; padding: 0;
   font-family: 'Rodchenko', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -135,162 +135,424 @@ body {
 }
 
 /* модальное окно */
-#ModalOverlay{
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-    position: fixed;
+/* ===== МОДАЛЬНОЕ ОКНО — обновлённые стили ===== */
 
-    opacity: 0;
-    visibility: hidden;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    transition: all 0.3s ease;
-
-    backdrop-filter: blur(5px);
-    /* -webkit-backdrop-filter: blur(5px); */
-}
-#ModalOverlay.active{
-    opacity: 1;
-    visibility: visible;
-}
-#ModalContent{
-    width: 90%;
-    padding: 30px;
-    overflow: auto;
-    max-width: 1000px;
-    color: var(--text);
-    position: relative;
-    border-radius: 12px;
-    background: var(--bg);
-    box-sizing: border-box;
-    transform: translateY(-20px);
-    transition: transform 0.3s ease;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-#TimeSet{
-    display: flex;
-    text-align: left;
-    margin-right: auto;
+/* Overlay */
+#ModalOverlay {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  position: fixed;
+  opacity: 0;
+  visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.4); /* затемнение фона */
 }
 
-#ModalOverlay.active #ModalContent{
-    transform: translateY(0);
-}
-#closeBtn{
-    top: 10px;
-    right: 15px;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    background: none;
-    margin-left: auto;
-    position: absolute;
-    color: var(--surface);
-    transition: color 0.2s;
+#ModalOverlay.active {
+  opacity: 1;
+  visibility: visible;
 }
 
-/* кнопки теста */
-.Test{
-    display: flex;
-    min-height: 100px;
-    align-items: center;
-    justify-content: center;
-
-}
-.Test10s{
-    /* размеры */
-    font-size: 18px;
-    line-height: 1.2;
-    padding: 5px 25px;
-    text-align: center;
-    box-sizing: border-box;
-
-    /* цвет */
-    cursor: pointer;
-    transition: 0.2s;
-    color: #ffffff;
-    border-radius: 10px;
-    background: var(--bgbtntest);
-}
-.Test1min{
-    /* размеры */
-    font-size: 18px;
-    line-height: 1.2;
-    padding: 5px 25px;
-    text-align: center;
-    box-sizing: border-box;
-
-    /* цвет */
-    cursor: pointer;
-    transition: 0.2s;
-    color: #ffffff;
-    border-radius: 10px;
-    background: var(--bgbtntest);
-}
-.Test10min{
-    /* размеры */
-    font-size: 18px;
-    line-height: 1.2;
-    padding: 5px 25px;
-    text-align: center;
-    box-sizing: border-box;
-
-    /* цвет */
-    cursor: pointer;
-    transition: 0.2s;
-    color: #ffffff;
-    border-radius: 10px;
-    background: var(--bgbtntest);
+/* Контент модального окна */
+#ModalContent {
+  width: 90%;
+  max-width: 600px; /* оптимальная ширина */
+  max-height: 90vh;
+  padding: 24px;
+  overflow-y: auto;
+  color: var(--text);
+  position: relative;
+  border-radius: 16px;
+  background: var(--surface); /* используем вашу переменную */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-color);
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
 }
 
-
-/* Изменить цвет */
-.icon-tabler-x {
-  color: var(--text); 
-  transition: transform 0.2s;
+#ModalOverlay.active #ModalContent {
+  transform: translateY(0);
 }
 
-/* Анимация при наведении */
-.icon-tabler-x:hover {
+/* Скроллбар для контента */
+#ModalContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+#ModalContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#ModalContent::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+#ModalContent::-webkit-scrollbar-thumb:hover {
+  background: var(--button);
+}
+
+/* ===== Кнопка закрытия ===== */
+#CloseBtn {
+  top: 12px;
+  right: 12px;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  background: var(--button);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  color: var(--text);
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+#CloseBtn:hover {
+  background: var(--primary);
+  color: #fff;
   transform: rotate(90deg);
 }
 
-/* таблица */
-#TbeGitData{
-    width: 100%;
-    border-collapse: collapse;
+#CloseBtn svg {
+  width: 20px;
+  height: 20px;
 }
 
-.TbeGit th, .TbeGit td{
-    padding: 12px 15px;
-    text-align: center;
-    border-bottom: 1px solid var(--border-color);
+/* ===== Заголовок ===== */
+#TimeSet {
+  margin: 0 0 20px 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
 }
 
-#TbeGitData th{
-    font-weight: 600;
-    color: var(--text);
-    background-color: var(--bg);
+/* ===== Кнопки тестов ===== */
+.Test {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-.InputP{
-    font-size: 17px;
-    text-align: left;
-    margin-right: auto;
+.Test button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  background: var(--bgbtntest);
+  border: 2px solid var(--bgbtntest);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  line-height: 1.3;
 }
 
-.TimeInput{
-    margin-left: 33px;
+.Test button svg {
+  width: 24px;
+  height: 24px;
+  opacity: 0.9;
 }
-.CheckboxRepeat{
-    margin-left: 40px;
+
+.Test button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 81, 173, 0.4);
+  border-color: var(--primary);
+}
+
+.Test button:active {
+  transform: translateY(-1px);
+}
+
+/* ===== Поля ввода ===== */
+#Input {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.InputP {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.InputP > a {
+  min-width: 65px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.InputP input[type="text"],
+.InputP input[type="time"],
+.InputP input[type="date"] {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.InputP input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.15);
+}
+
+.InputP input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  margin: 0 4px;
+}
+
+.InputP a:not(:first-child) {
+  min-width: auto;
+  margin-left: 4px;
+  font-size: 0.95rem;
+  color: var(--text);
+  opacity: 0.85;
+  cursor: pointer;
+  user-select: none;
+}
+
+.InputP a:not(:first-child):hover {
+  opacity: 1;
+  color: var(--primary);
+}
+
+/* ===== Кнопки действий ===== */
+#Input > .Btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(88, 101, 242, 0.3);
+}
+
+#Input > .Btn:last-child {
+  background: var(--button);
+  color: var(--text);
+  box-shadow: none;
+}
+
+#Input > .Btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(88, 101, 242, 0.45);
+}
+
+#Input > .Btn:last-child:hover {
+  background: var(--border-color);
+  transform: translateY(-2px);
+}
+
+#Input > .Btn:active {
+  transform: translateY(0);
+}
+
+#Input > .Btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ===== Таблица ===== */
+.TbeGit {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin-top: 8px;
+  background: var(--surface);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.TbeGit thead {
+  background: var(--bg);
+}
+
+.TbeGit th {
+  padding: 12px 10px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  border-bottom: 2px solid var(--border-color);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.TbeGit td {
+  padding: 11px 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text);
+}
+
+.TbeGit tr:last-child td {
+  border-bottom: none;
+}
+
+.TbeGit tr:hover {
+  background: var(--bg);
+}
+
+#GitGists td[colspan] {
+  padding: 24px;
+  color: var(--text);
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* Кнопки в таблице */
+.TbeGit .table-btn {
+  padding: 6px 12px;
+  margin: 2px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background: var(--button);
+  color: var(--text);
+  transition: all 0.2s;
+}
+
+.TbeGit .table-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.TbeGit .table-btn.delete {
+  background: #fecaca;
+  color: #dc2626;
+}
+
+.TbeGit .table-btn.delete:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+/* ===== Анимации строк таблицы ===== */
+#GitGists tr {
+  animation: fadeInRow 0.25s ease forwards;
+  opacity: 0;
+}
+
+#GitGists tr:nth-child(1) { animation-delay: 0.05s; }
+#GitGists tr:nth-child(2) { animation-delay: 0.1s; }
+#GitGists tr:nth-child(3) { animation-delay: 0.15s; }
+#GitGists tr:nth-child(4) { animation-delay: 0.2s; }
+#GitGists tr:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes fadeInRow {
+  to { opacity: 1; }
+}
+
+/* ===== Адаптив ===== */
+@media (max-width: 650px) {
+  .Test {
+    grid-template-columns: 1fr;
+  }
+  
+  .InputP {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .InputP > a {
+    min-width: auto;
+  }
+  
+  .TimeInput,
+  .CheckboxRepeat {
+    margin-left: 0;
+  }
+  
+  #ModalContent {
+    padding: 20px 16px;
+    width: 95%;
+  }
+  
+  #TimeSet {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .TbeGit {
+    font-size: 0.85rem;
+  }
+  
+  .TbeGit th,
+  .TbeGit td {
+    padding: 8px 6px;
+  }
+  
+  #Repeat,
+  #BtnTH {
+    display: none; /* Скрываем менее важные колонки на мобильных */
+  }
+  
+  .TbeGit td[colspan] {
+    padding: 16px;
+  }
+}
+
+/* ===== Подсветка при фокусе для доступности ===== */
+#CloseBtn:focus,
+.Test button:focus,
+#Input input:focus,
+#Input > .Btn:focus,
+.TbeGit .table-btn:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Убираем стандартный аутлайн для кастомного */
+#CloseBtn:focus,
+.Test button:focus,
+#Input > .Btn:focus,
+.TbeGit .table-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.4);
 }
 
 /* часы - таймер */
@@ -302,15 +564,15 @@ main{
 }
 .Clock-Container{
     font-size: 5rem;
+    text-align: center;
     color: #388E3C !important;
     text-shadow: 0 0 20px rgba(56, 142, 60, 0.7);
+
+    
 }
 
-#cloc-ms {
-    color: inherit !important;
-}
 .DataContainer{
-    font-size: 2rem;
+    font-size: 5rem;
     font-weight: 100;
 }
 
@@ -320,6 +582,7 @@ footer{
     display: flex;
     font-size: 0.9rem;
     text-align: center;
+    
     color: var(--text);
     background-color: var(--surface);
 }
@@ -331,4 +594,35 @@ footer{
 }
 #BtnRepos{
     margin-left: auto;
+}
+
+#BtnTimer{
+    color: var(--text);
+    font-size: 16px;
+    background-color: var(--surface); /* цвет фона */
+    border: 2px solid var(--surface); /* цвет рамки */
+    transition: background-color 0.2s, border-color 0.2s; /* плавность */
+}
+
+/* кнопки модалки */
+.btn-edit{
+    font-size: 16px;
+    cursor: pointer;
+    color: #ffffff;            /* цвет текста */
+    padding: 2px 1px;
+    border-radius: 6px;
+    background-color: #54bce6; /* цвет фона */
+    border: 2px solid #54bce6; /* цвет рамки */
+    transition: background-color 0.2s, border-color 0.2s; /* плавность */
+}
+
+.btn-delete{
+    font-size: 16px;
+    cursor: pointer;
+    color: #ffffff;            /* цвет текста */
+    padding: 2px 1px;
+    border-radius: 6px;
+    border: 2px solid #e73333; /* цвет рамки */
+    background-color: #e73333; /* цвет фона */
+    transition: background-color 0.2s, border-color 0.2s; /* плавность */
 }
