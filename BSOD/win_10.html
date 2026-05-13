@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSOD</title>
+    <style>
+        body {
+            background-color: #0078d7; /* Фирменный синий цвет Windows 10 */
+            color: white;
+            font-family: "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* Выравнивание контента влево, как в оригинале */
+        }
+
+        .container {
+            max-width: 800px;
+            padding-left: 10%;
+            width: 100%;
+        }
+
+        .sad-face {
+            font-size: 120px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            margin-top: -50px; /* Небольшая коррекция по вертикали */
+        }
+
+        .message {
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .percent {
+            font-size: 24px;
+            margin-bottom: 40px;
+        }
+
+        .details {
+            font-size: 14px;
+            line-height: 1.6;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        /* Имитация QR-кода с помощью CSS */
+        .qr-code {
+            width: 90px;
+            height: 90px;
+            background-color: white;
+            padding: 5px;
+            margin-right: 20px;
+            flex-shrink: 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 2px;
+            background: white;
+            position: relative;
+        }
+        
+        /* Упрощенная имитация пикселей QR */
+        .qr-code::after {
+            content: "";
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            background: 
+                linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%),
+                linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            opacity: 0.8;
+        }
+
+        .details-text {
+            padding-top: 2px;
+        }
+
+        .link {
+            text-decoration: none;
+            color: white;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stop-code {
+            margin-top: 5px;
+            font-size: 13px;
+        }
+
+        /* Адаптив для маленьких экранов */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 5%;
+            }
+            .sad-face {
+                font-size: 80px;
+            }
+            .message {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="sad-face">:(</div>
+        
+        <div class="message">
+            Your PC ran into a problem and needs to restart. We're just collecting some error info, and then we'll restart for you.
+        </div>
+
+        <div class="percent">
+            <span id="percent-val">0</span>% complete
+        </div>
+
+        <div class="details">
+            <div class="qr-code"></div>
+            <div class="details-text">
+                <div>For more information about this issue and possible fixes, visit <a href="#" class="link">https://www.windows.com/stopcode</a></div>
+                <div class="stop-code">If you call a support person, give them this info:<br>Stop code: CRITICAL_PROCESS_DIED</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const percentEl = document.getElementById("percent-val");
+            let current = 0;
+
+            function tick() {
+                if (current >= 100) {
+                    percentEl.textContent = 100;
+                    // Возврат на предыдущую страницу после небольшой паузы
+                    setTimeout(function () {
+                        if (window.history.length > 1) {
+                            window.history.back();
+                        } else {
+                            // Если истории нет, можно перенаправить на главную или закрыть
+                            window.location.href = "about:blank"; 
+                        }
+                    }, 800);
+                    return;
+                }
+
+                // Случайный шаг для реалистичности
+                const step = Math.floor(Math.random() * 2); 
+                current += step;
+                if (current > 100) current = 100;
+
+                percentEl.textContent = current;
+
+                // Скорость обновления (200-600 мс)
+                const delay = 200 + Math.random() * 400;
+                setTimeout(tick, delay);
+            }
+
+            // Запуск через 1.5 секунды после загрузки
+            setTimeout(tick, 1500);
+        })();
+    </script>
+</body>
+</html>
