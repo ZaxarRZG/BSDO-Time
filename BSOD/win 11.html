@@ -3,151 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows - Critical Error</title>
+    <title>BSOD</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
-            -webkit-font-smoothing: antialiased;
         }
+
         body {
-            background-color: #0078D7;
-            color: #FFFFFF;
-            font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #000;
+            color: #fff;
+            font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
             height: 100vh;
-            overflow: hidden;
-            padding: 60px;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            cursor: default;
         }
-        .container {
-            max-width: 850px;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            flex: 1;
-        }
-        .sad-face {
-            font-size: 100px;
-            line-height: 1;
-            font-weight: 100;
-        }
-        .message {
-            font-size: 24px;
-            line-height: 1.5;
-            font-weight: 300;
-            max-width: 700px;
-        }
-        .progress {
-            font-size: 16px;
-            font-weight: 300;
-            margin-top: 8px;
-        }
-        .footer {
-            margin-top: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding-bottom: 20px;
-        }
-        .error-info {
-            font-size: 14px;
-            line-height: 1.6;
-            font-weight: 300;
-        }
-        .error-code {
+
+        .main-message {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 16px;
             font-weight: 400;
-            display: inline-block;
-            margin-top: 4px;
         }
-        .qr {
-            width: 100px;
-            height: 100px;
-            background: #FFFFFF;
-            padding: 6px;
-            border-radius: 4px;
-            flex-shrink: 0;
+
+        .percent-container {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 60px;
+            min-height: 40px;
         }
-        .qr svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-            shape-rendering: crispEdges;
+
+        .footer {
+            position: fixed;
+            bottom: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #fff;
         }
-        /* Адаптив для мобильных */
-        @media (max-width: 600px) {
-            body { padding: 30px; }
-            .sad-face { font-size: 72px; }
-            .message { font-size: 18px; }
-            .footer { flex-direction: column; align-items: flex-start; }
-            .qr { width: 80px; height: 80px; }
+
+        .footer .stop-code {
+            margin-bottom: 6px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="sad-face">:(</div>
-        <div class="message">
-            Your PC ran into a problem and needs to restart. We're just collecting some error info, and then we'll restart for you.
-        </div>
-        <div class="progress">
-            <span id="percent">0</span>% complete
-        </div>
 
-        <div class="footer">
-            <div class="error-info">
-                If you'd like to know more, you can search online later for this error:<br>
-                <span class="error-code">CRITICAL_PROCESS_DIED</span>
-            </div>
-            <div class="qr">
-                <!-- Упрощённая SVG-имитация QR-кода -->
-                <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="0" y="0" width="7" height="7" fill="#000"/>
-                    <rect x="1" y="1" width="5" height="5" fill="#fff"/>
-                    <rect x="2" y="2" width="3" height="3" fill="#000"/>
-                    <rect x="14" y="0" width="7" height="7" fill="#000"/>
-                    <rect x="15" y="1" width="5" height="5" fill="#fff"/>
-                    <rect x="16" y="2" width="3" height="3" fill="#000"/>
-                    <rect x="0" y="14" width="7" height="7" fill="#000"/>
-                    <rect x="1" y="15" width="5" height="5" fill="#fff"/>
-                    <rect x="2" y="16" width="3" height="3" fill="#000"/>
-                    <rect x="8" y="8" width="5" height="5" fill="#000"/>
-                    <rect x="9" y="9" width="3" height="3" fill="#fff"/>
-                    <rect x="10" y="10" width="1" height="1" fill="#000"/>
-                    <path d="M8 0h1v1H8zM10 0h1v1H10zM12 0h1v1H12zM9 1h1v1H9zM11 1h1v1H11zM8 2h1v1H8zM10 2h1v1H10zM0 8h1v1H0zM2 8h1v1H2zM4 8h1v1H4zM6 8h1v1H6zM1 9h1v1H1zM3 9h1v1H3zM5 9h1v1H5zM14 8h1v1H14zM16 8h1v1H16zM18 8h1v1H18zM15 9h1v1H15zM17 9h1v1H17zM14 10h1v1H14zM16 10h1v1H16zM18 10h1v1H18zM0 18h1v1H0zM2 18h1v1H2zM4 18h1v1H4zM1 19h1v1H1zM3 19h1v1H3zM8 14h1v1H8zM10 14h1v1H10zM12 14h1v1H12zM9 15h1v1H9zM11 15h1v1H11zM8 16h1v1H8zM10 16h1v1H10zM14 18h1v1H14zM16 18h1v1H16zM18 18h1v1H18zM15 19h1v1H15zM17 19h1v1H15z" fill="#000"/>
-                </svg>
-            </div>
-        </div>
+    <div class="main-message">
+        Your device ran into a problem and needs to restart.
+    </div>
+
+    <div class="percent-container">
+        <span id="percent">0</span>% complete
+    </div>
+
+    <div class="footer">
+        <div class="stop-code">Stop code: DRIVER_IRQL_NOT_LESS_OR_EQUAL (0xD1)</div>
+        <div class="stop-code">What failed: myfault.sys</div>
     </div>
 
     <script>
-        let percent = 0;
-        const percentEl = document.getElementById('percent');
-        
-        const timer = setInterval(() => {
-            if (percent >= 100) {
-                clearInterval(timer);
-                setTimeout(() => {
-                    document.body.style.background = '#000';
-                    document.body.innerHTML = `
-                        <div style="height:100vh; display:flex; justify-content:center; align-items:center; color:#fff; font-family:'Segoe UI',system-ui,sans-serif; font-size:24px;">
-                            Restarting...
-                        </div>`;
-                    setTimeout(() => location.reload(), 2500);
-                }, 1500);
-                return;
+        (function () {
+            const percentEl = document.getElementById("percent");
+            let current = 0;
+
+            function tick() {
+                if (current >= 100) {
+                    percentEl.textContent = 100;
+                    // Возврат на предыдущую страницу
+                    setTimeout(function () {
+                        if (window.history.length > 1) {
+                            window.history.back();
+                        } else {
+                            window.location.href = "/";
+                        }
+                    }, 600);
+                    return;
+                }
+
+                // Случайный шаг от 0 до 3
+                const step = Math.floor(Math.random() * 3);
+                current += step;
+                if (current > 100) current = 100;
+
+                percentEl.textContent = current;
+
+                // Скорость меняется случайным образом (200–800 мс)
+                const delay = 200 + Math.random() * 600;
+                setTimeout(tick, delay);
             }
-            
-            // Имитация "нелинейного" сбора данных Windows
-            percent += Math.floor(Math.random() * 4) + 1;
-            if (percent > 100) percent = 100;
-            percentEl.textContent = percent;
-        }, 700 + Math.random() * 600);
+
+            // Начать через 1.5 секунды
+            setTimeout(tick, 1500);
+        })();
     </script>
 </body>
 </html>
