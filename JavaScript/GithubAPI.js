@@ -1,13 +1,16 @@
-
+// ===== GitHub GISTS API =====
 var GITHUB_CONFIG = {
     apiBase: 'https://api.github.com',
     token: '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',
     gistId: null,
     gistDescription: 'World Time - Timer Entries',
-    gistFilename: 'timer-data.json'
+    gistFilename: 'timer-data.json',
+    autoRefreshInterval: null,
+    checkTimerInterval: null
 };
 
 var elements = {};
+var timerEntries = [];
 
 
 function initGitHubAPI() {
@@ -18,7 +21,7 @@ function initGitHubAPI() {
         return btn.textContent.includes('Добавить');
     });
     elements.refreshBtn = Array.from(document.querySelectorAll('button')).find(function(btn) {
-        return btn.textContent.includes('Обновить');
+        return btn.textContent.includes('Обновить') || btn.textContent.includes('обновить');
     });
     elements.nameInput = document.querySelector('input[type="text"]');
     elements.timeInput = document.querySelector('input[type="time"]');
@@ -28,15 +31,150 @@ function initGitHubAPI() {
     if (elements.addBtn) {
         elements.addBtn.addEventListener('click', handleAddEntry);
     }
+    
     if (elements.refreshBtn) {
-        elements.refreshBtn.addEventListener('click', loadEntries);
+        elements.refreshBtn.addEventListener('click', function() {
+            console.log('🔄 Ручное обновление...');
+            loadEntries();
+        });
+        console.log('✅ Кнопка "Обновить" привязана');
     }
+    
+    // Авто-обновление каждые 60 секунд
+    startAutoRefresh();
+    
+    // Проверка таймеров каждые 10 секунд
+    startTimerCheck();
     
     loadEntries();
     console.log('✅ GitHub API инициализирован');
 }
 
-// ===== ЗАПРОС К API =====
+// ===== АВТО-ОБНОВЛЕНИЕ =====
+function startAutoRefresh() {
+    if (GITHUB_CONFIG.autoRefreshInterval) {
+        clearInterval(GITHUB_CONFIG.autoRefreshInterval);
+    }
+    
+    GITHUB_CONFIG.autoRefreshInterval = setInterval(function() {
+        console.log('🔄 Авто-обновление данных...');
+        loadEntries(false); // false = не показывать загрузку
+    }, 60000); // 60 секунд
+    
+    console.log('⏱️ Авто-обновление включено (каждую минуту)');
+}
+
+// ===== ПРОВЕРКА ТАЙМЕРОВ =====
+function startTimerCheck() {
+    if (GITHUB_CONFIG.checkTimerInterval) {
+        clearInterval(GITHUB_CONFIG.checkTimerInterval);
+    }
+    
+    GITHUB_CONFIG.checkTimerInterval = setInterval(function() {
+        checkTimers();
+    }, 10000); // Проверяем каждые 10 секунд
+    
+    console.log('⏰ Проверка таймеров включена (каждые 10 сек)');
+}
+
+// ===== ПРОВЕРКА АКТИВНЫХ ТАЙМЕРОВ =====
+function checkTimers() {
+    if (timerEntries.length === 0) return;
+    
+    var now = new Date();
+    var currentTime = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+    var currentDate = now.toISOString().split('T')[0];
+    var currentDay = now.getDay(); // 0 = воскресенье, 1 = понедельник, и т.д.
+    
+    timerEntries.forEach(function(entry) {
+        // Проверяем дату
+        if (entry.noDate || entry.date === currentDate) {
+            // Проверяем время
+            if (entry.time === currentTime) {
+                // Проверяем повтор (день недели)
+                if (entry.repeat) {
+                    // Если повтор включён - проверяем день недели
+                    var entryDay = new Date(entry.date || currentDate).getDay();
+                    if (entryDay === currentDay || entry.noDate) {
+                        triggerTimer(entry);
+                    }
+                } else {
+                    // Если без повтора - проверяем что ещё не сработал сегодня
+                    if (!entry.triggeredToday || entry.triggeredToday !== currentDate) {
+                        triggerTimer(entry);
+                        // Отмечаем что сработал сегодня
+                        entry.triggeredToday = currentDate;
+                        saveTriggeredStatus(entry);
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ===== ЗАПУСК ТАЙМЕРА =====
+function triggerTimer(entry) {
+    console.log('⏰ ЗАПУСК ТАЙМЕРА:', entry.name, entry.time);
+    
+    // Показываем уведомление
+    showNotification('⏰ ' + entry.name, 'Время: ' + entry.time);
+    
+    // Если есть функция запуска таймера из Script.js
+    if (typeof window.startCountdown === 'function') {
+        // Запускаем таймер на 10 секунд как тест
+        window.startCountdown(10);
+    }
+    
+    // Звуковой сигнал (опционально)
+    playAlarmSound();
+}
+
+// ===== УВЕДОМЛЕНИЕ =====
+function showNotification(title, message) {
+    // Создаём элемент уведомления
+    var notification = document.createElement('div');
+    notification.style.cssText = 
+        'position:fixed;top:20px;right:20px;background:#2196f3;color:white;' +
+        'padding:20px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.3);' +
+        'z-index:10000;animation:slideIn 0.3s ease;max-width:300px;';
+    notification.innerHTML = 
+        '<h3 style="margin:0 0 10px 0;">' + title + '</h3>' +
+        '<p style="margin:0;">' + message + '</p>';
+    
+    document.body.appendChild(notification);
+    
+    // Удаляем через 5 секунд
+    setTimeout(function() {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(function() {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 5000);
+}
+
+// ===== ЗВУКОВОЙ СИГНАЛ =====
+function playAlarmSound() {
+    try {
+        var audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE');
+        audio.play().catch(function() {
+            console.log('🔇 Звук заблокирован браузером');
+        });
+    } catch(e) {
+        console.log('❌ Ошибка воспроизведения звука:', e);
+    }
+}
+
+// ===== СОХРАНЕНИЕ СТАТУСА =====
+function saveTriggeredStatus(entry) {
+    // Сохраняем в localStorage чтобы не срабатывал дважды
+    if (!window.triggeredTimers) {
+        window.triggeredTimers = {};
+    }
+    window.triggeredTimers[entry.id] = new Date().toISOString();
+    localStorage.setItem('triggeredTimers', JSON.stringify(window.triggeredTimers));
+}
+
+
 function githubRequest(endpoint, method, body) {
     var url = GITHUB_CONFIG.apiBase + endpoint;
     var headers = {
@@ -67,7 +205,7 @@ function githubRequest(endpoint, method, body) {
     });
 }
 
-// ===== ПОИСК ИЛИ СОЗДАНИЕ GIST =====
+
 function findOrCreateGist() {
     if (GITHUB_CONFIG.gistId) {
         return Promise.resolve(GITHUB_CONFIG.gistId);
@@ -87,7 +225,7 @@ function findOrCreateGist() {
     });
 }
 
-// ===== СОЗДАНИЕ GIST =====
+
 function createNewGist() {
     var gistData = {
         description: GITHUB_CONFIG.gistDescription,
@@ -105,11 +243,13 @@ function createNewGist() {
     });
 }
 
-// ===== ЗАГРУЗКА ЗАПИСЕЙ =====
-function loadEntries() {
+
+function loadEntries(showLoading) {
     if (!elements.tableBody) return;
     
-    elements.tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">⏳ Загрузка...</td></tr>';
+    if (showLoading !== false) {
+        elements.tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">⏳ Загрузка...</td></tr>';
+    }
     
     if (!GITHUB_CONFIG.token) {
         showDemoData();
@@ -125,15 +265,20 @@ function loadEntries() {
             if (!file) throw new Error('Файл не найден');
             
             var data = JSON.parse(file.content);
-            renderTable(data.entries || []);
+            timerEntries = data.entries || []; // Сохраняем для проверки
+            renderTable(timerEntries);
+            
+            console.log('✅ Загружено записей:', timerEntries.length);
         })
         .catch(function(error) {
             console.error('❌ Ошибка:', error);
-            elements.tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:red;">' + error.message + '</td></tr>';
+            if (showLoading !== false) {
+                elements.tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:red;">' + error.message + '</td></tr>';
+            }
         });
 }
 
-// ===== ОТРИСОВКА ТАБЛИЦЫ - ИСПРАВЛЕНО =====
+
 function renderTable(entries) {
     if (!elements.tableBody) return;
     
@@ -158,7 +303,6 @@ function renderTable(entries) {
             '</td>';
     });
     
-    // ✅ ИСПРАВЛЕНО: elements.tableBody вместо row
     elements.tableBody.querySelectorAll('.btn-edit').forEach(function(btn) {
         btn.addEventListener('click', function() {
             var idx = parseInt(this.getAttribute('data-index'));
@@ -174,7 +318,7 @@ function renderTable(entries) {
     });
 }
 
-// ===== ДОБАВЛЕНИЕ =====
+//d
 function handleAddEntry() {
     if (!GITHUB_CONFIG.token) {
         alert('Установите токен!');
@@ -242,9 +386,9 @@ function handleAddEntry() {
         });
 }
 
-// ===== РЕДАКТИРОВАНИЕ =====
+
 function editEntry(index) {
-    console.log(' Edit index:', index);
+    console.log('✏️ Edit index:', index);
     
     findOrCreateGist().then(function(gistId) {
         return githubRequest('/gists/' + gistId).then(function(gist) {
@@ -277,9 +421,9 @@ function editEntry(index) {
     });
 }
 
-// ===== УДАЛЕНИЕ =====
+
 function deleteEntry(index) {
-    console.log(' Delete index:', index);
+    console.log('🗑️ Delete index:', index);
     
     if (!confirm('Удалить запись?')) return;
     
@@ -309,23 +453,61 @@ function deleteEntry(index) {
     });
 }
 
-// ===== ВСПОМОГАТЕЛЬНЫЕ =====
+
 function showDemoData() {
-    renderTable([
+    timerEntries = [
         { name: 'Утро ☕', time: '08:00', date: '2026-01-15', noDate: false, repeat: true },
         { name: 'Обед 🍽️', time: '13:30', date: null, noDate: true, repeat: false }
-    ]);
+    ];
+    renderTable(timerEntries);
 }
 
-// ===== INIT =====
+
+function stopAutoRefresh() {
+    if (GITHUB_CONFIG.autoRefreshInterval) {
+        clearInterval(GITHUB_CONFIG.autoRefreshInterval);
+        GITHUB_CONFIG.autoRefreshInterval = null;
+        console.log('⏹️ Авто-обновление остановлено');
+    }
+}
+
+function stopTimerCheck() {
+    if (GITHUB_CONFIG.checkTimerInterval) {
+        clearInterval(GITHUB_CONFIG.checkTimerInterval);
+        GITHUB_CONFIG.checkTimerInterval = null;
+        console.log('⏹️ Проверка таймеров остановлена');
+    }
+}
+
+
 window.GitHubAPI = {
     init: initGitHubAPI,
     refresh: loadEntries,
+    stop: function() {
+        stopAutoRefresh();
+        stopTimerCheck();
+    },
     setToken: function(token) {
         GITHUB_CONFIG.token = token;
+    },
+    getEntries: function() {
+        return timerEntries;
     }
 };
 
+
+var style = document.createElement('style');
+style.textContent = 
+    '@keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }' +
+    '@keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }';
+document.head.appendChild(style);
+
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initGitHubAPI, 1000);
+});
+
+
+window.addEventListener('beforeunload', function() {
+    stopAutoRefresh();
+    stopTimerCheck();
 });
