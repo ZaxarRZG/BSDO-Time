@@ -29,3 +29,4 @@
 0.16V - добавлен html BSOD win 11
 0.16VAD - добавлен html BSOD win 10
 0.16AD - заменена надпись "world time" на "Moscow time"
+0.17SB - переделан таймер
