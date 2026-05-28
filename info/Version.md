@@ -30,3 +30,4 @@
 0.16VAD - добавлен html BSOD win 10
 0.16AD - заменена надпись "world time" на "Moscow time"
 0.17SB - переделан таймер
+0.18VSB - исправлен API, таймер и показ bsod.

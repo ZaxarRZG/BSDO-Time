@@ -111,35 +111,87 @@ function updateTimerColor(seconds) {
     }
 }
 
-function getBSODPath() {
-    return 'images/bsod_win11.jpeg';
+// ===== ОПРЕДЕЛЕНИЕ ВЕРСИИ WINDOWS =====
+function detectWindowsVersion() {
+    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    
+    console.log('🔍 User Agent:', userAgent);
+    
+    // Windows 11 (NT 10.0 + Win64)
+    if (/Windows NT 10\.0/.test(userAgent)) {
+        if (/Win64/.test(userAgent) || /WOW64/.test(userAgent)) {
+            console.log('🪟 Обнаружена Windows 10/11 (64-bit)');
+            // Дополнительные проверки для Win11
+            if (navigator.userAgentData && navigator.userAgentData.platformVersion) {
+                var platformVersion = navigator.userAgentData.platformVersion;
+                if (parseFloat(platformVersion) >= 13) {
+                    console.log('✅ Windows 11 подтверждена');
+                    return 'win11';
+                }
+            }
+            // По умолчанию считаем Win11 для 64-bit систем
+            return 'win11';
+        }
+        console.log('✅ Windows 10 подтверждена');
+        return 'win10';
+    }
+    
+    // Старые версии Windows
+    if (/Windows NT 6\.[1-3]/.test(userAgent)) {
+        console.log('🪟 Старая версия Windows');
+        return 'win10'; // Используем win10.html
+    }
+    
+    // Не Windows
+    console.log('❌ Не Windows или не определено');
+    return 'win10'; // По умолчанию
 }
 
+// ===== ПОЛУЧЕНИЕ ПУТИ К BSOD =====
+function getBSODPath() {
+    var os = detectWindowsVersion();
+    var path = 'BSOD/' + os + '.html';
+    console.log('📁 Путь к BSOD:', path);
+    return path;
+}
+// ===== ПОКАЗ BSOD =====
 function showBSOD() {
-    var bsodOverlay = document.getElementById('bsod-overlay');
-    var bsodImage = document.getElementById('bsod-image');
+    console.log('💥 Показ BSOD...');
     
+    var bsodOverlay = document.getElementById('bsod-overlay');
+    
+    // Создаём overlay если нет
     if (!bsodOverlay) {
         bsodOverlay = document.createElement('div');
         bsodOverlay.id = 'bsod-overlay';
         bsodOverlay.className = 'hidden';
-        bsodOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0078d7;display:flex;justify-content:center;align-items:center;z-index:9999;margin:0;padding:0;';
+        bsodOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;margin:0;padding:0;overflow:hidden;';
         document.body.appendChild(bsodOverlay);
     }
     
-    if (!bsodImage) {
-        bsodImage = document.createElement('img');
-        bsodImage.id = 'bsod-image';
-        bsodImage.style.cssText = 'width:100%;height:100%;object-fit:fill;display:block;';
-        bsodOverlay.appendChild(bsodImage);
-    }
+    // Очищаем содержимое
+    bsodOverlay.innerHTML = '';
     
-    bsodImage.src = getBSODPath();
+    // Создаём iframe для загрузки HTML файла
+    var iframe = document.createElement('iframe');
+    iframe.src = getBSODPath();
+    iframe.style.cssText = 'width:100%;height:100%;border:none;display:block;';
+    iframe.id = 'bsod-iframe';
+    iframe.allowFullscreen = true;
+    
+    bsodOverlay.appendChild(iframe);
+    
+    // Показываем overlay
     bsodOverlay.classList.remove('hidden');
-    bsodOverlay.style.display = 'flex';
+    bsodOverlay.style.display = 'block';
     document.body.style.overflow = 'hidden';
     
-    enterFullscreen();
+    // Включаем полный экран
+    setTimeout(function() {
+        enterFullscreen();
+    }, 100);
+    
+    console.log('✅ BSOD показан');
 }
 
 function enterFullscreen() {
